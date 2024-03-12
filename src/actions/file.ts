@@ -1,11 +1,11 @@
 "use server";
 
+import { InitialStateType } from "@/app/FileForm";
+
 export async function handleFileUpload(
-  prevState: {
-    message: string;
-  },
+  prevState: InitialStateType,
   formData: FormData
-) {
+): Promise<InitialStateType> {
   const file = formData.get("file") as File;
   try {
     if (file && file.type === "text/xml") {
@@ -14,12 +14,14 @@ export async function handleFileUpload(
 
       return {
         message: text,
+        status: "success",
       };
     } else {
       throw new Error("Invalid file type");
     }
   } catch (error) {
     return {
+      status: "error",
       message: "File upload failed",
     };
   }
