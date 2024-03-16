@@ -1,7 +1,5 @@
 "use client";
 
-// import { handleFileUpload } from "@/actions/file";
-// import { useFormState } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
@@ -29,19 +27,7 @@ const formSchema = z.object({
     }),
 });
 
-// export type InitialStateType = {
-// status: "success" | "error" | null;
-// message: string;
-// };
-
-// const initialState: InitialStateType = {
-// message: "",
-// status: null,
-// };
-
 const FileForm = () => {
-  // const [state, formAction] = useFormState(handleFileUpload, initialState);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -58,20 +44,6 @@ const FileForm = () => {
 
   return (
     <div>
-      {/* <textarea
-        name="output"
-        value={state.message}
-        cols={75}
-        rows={20}
-        readOnly
-        className="text-black"
-      ></textarea> */}
-      {/* {state.status === "success" && (
-        <p className="text-green-500">{state.message}</p>
-      )}
-      {state.status === "error" && (
-        <p className="text-red-500">{state.message}</p>
-      )} */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
