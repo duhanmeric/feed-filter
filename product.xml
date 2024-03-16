@@ -8,25 +8,23 @@
     <Price>24.99</Price>
     <Retail_Price>24.99</Retail_Price>
     <Thumbnail_URL>https://www.domain.com/images/heh-9133_600x600.png</Thumbnail_URL>
-    <Search_Keywords>lorem, ipsum, dolor, ...</Search_Keywords>
-    <Description>Sociosqu facilisis duis ...</Description>
-    <Category>Home>Home Decor>Pillows|Back In Stock</Category>
-    <Category_ID>298|511</Category_ID>
-    <Brand>FabDecor</Brand>
-    <Child_SKU></Child_SKU>
-    <Child_Price></Child_Price>
-    <Color>White</Color>
-    <Color_Family>White</Color_Family>
-    <Color_Swatches></Color_Swatches>
-    <Size></Size>
-    <Shoe_Size></Shoe_Size>
-    <Pants_Size></Pants_Size>
-    <Occassion></Occassion>
-    <Season></Season>
-    <Badges></Badges>
-    <Rating_Avg>4.2</Rating_Avg>
-    <Rating_Count>8</Rating_Count>
-    <Inventory_Count>21</Inventory_Count>
-    <Date_Created>2018-03-03 17:41:13</Date_Created>
+  </Product>
+  <Product>
+    <Product_ID>7615</Product_ID>
+    <SKU>HEH-2245</SKU>
+    <Name>Simply Sweet Blouse</Name>
+    <Product_URL>https://www.domain.com/product/heh-2245</Product_URL>
+    <Price>42</Price>
+    <Retail_Price>59.95</Retail_Price>
+    <Thumbnail_URL>https://www.domain.com/images/heh-2245_600x600.png</Thumbnail_URL>
+  </Product>
+  <Product>
+    <Product_ID>8100</Product_ID>
+    <SKU>WKS-6016</SKU>
+    <Name>Uptown Girl Blouse</Name>
+    <Product_URL>https://www.domain.com/product/wks-6016</Product_URL>
+    <Price>58</Price>
+    <Retail_Price>89.95</Retail_Price>
+    <Thumbnail_URL>https://www.domain.com/images/wks-6016_600x600.png</Thumbnail_URL>
   </Product>
  </Products>

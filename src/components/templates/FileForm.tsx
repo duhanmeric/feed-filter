@@ -13,6 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useState } from "react";
 
 const MAX_FILE_SIZE = 500000;
 const formSchema = z.object({
@@ -28,6 +29,8 @@ const formSchema = z.object({
 });
 
 const FileForm = () => {
+  const [output, setOutput] = useState<any>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,9 +40,32 @@ const FileForm = () => {
 
   const fileRef = form.register("file");
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    console.log("submitting");
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (values.file.length > 0) {
+      const file = values.file[0];
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        const xmlText = e.target?.result;
+
+        const res = await fetch("/api/process", {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: JSON.stringify(xmlText),
+        });
+
+        if (!res.ok) {
+          console.error("Failed to submit form.");
+        } else {
+          const json = await res.json();
+          setOutput(json.data);
+        }
+      };
+
+      reader.readAsText(file);
+    }
   }
 
   return (
@@ -62,6 +88,12 @@ const FileForm = () => {
           <Button type="submit">Submit</Button>
         </form>
       </Form>
+      {output && (
+        <div className="mt-10">
+          <h2>Output</h2>
+          <pre>{JSON.stringify(output, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import FileForm from "./FileForm";
+import FileForm from "@/components/templates/FileForm";
 
 export default function Home() {
   return (
