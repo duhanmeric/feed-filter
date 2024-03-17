@@ -26,16 +26,16 @@ export async function processFile(
     });
 
     const mainKey = Object.keys(result)[0];
-    const productArray = result[mainKey];
+    const itemArr = result[mainKey];
 
-    const keys = productArray.length > 0 ? Object.keys(productArray[0]) : [];
+    const keys = itemArr.length > 0 ? Object.keys(itemArr[0]) : [];
 
-    console.log("Parsed XML:", result, keys);
+    console.log("Parsed XML:", itemArr, result, keys);
 
     return {
       success: true,
       data: {
-        result,
+        result: itemArr,
         keys,
       },
     };
