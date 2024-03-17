@@ -30,7 +30,8 @@ export async function processFile(
 
     const keys = itemArr.length > 0 ? Object.keys(itemArr[0]) : [];
 
-    console.log("Parsed XML:", itemArr, result, keys);
+    // console.log("Parsed XML:", itemArr, result, keys);
+    console.log(itemArr.length);
 
     return {
       success: true,

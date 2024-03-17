@@ -10,18 +10,19 @@ const FileOutput = () => {
 
   const columns: ColumnDef<any>[] =
     feedState.data?.keys?.map((key: string) => ({
-      accessorKey: key, // or accessorFn for more complex scenarios
-      header: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize the header
+      accessorKey: key,
+      header: key.charAt(0).toUpperCase() + key.slice(1),
     })) ?? [];
 
   return (
-    <div>
+    <div className="mt-10">
+      <h1 className="text-2xl font-bold mb-5">Feed Result Table</h1>
       {feedState.data && feedState.data.keys && (
         <DataTable columns={columns} data={[...feedState.data.result]} />
       )}
       <br />
-      {<pre>{JSON.stringify(feedState.data?.keys, null, 2)}</pre>}
-      {<pre>{JSON.stringify(feedState.data?.result, null, 2)}</pre>}
+      {/* {<pre>{JSON.stringify(feedState.data?.keys, null, 2)}</pre>} */}
+      {/* {<pre>{JSON.stringify(feedState.data?.result, null, 2)}</pre>} */}
     </div>
   );
 };
