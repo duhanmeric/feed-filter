@@ -44,6 +44,7 @@ export async function processFile(
     return {
       success: false,
       message: error instanceof Error ? error.message : "An error occurred",
+      data: null,
     };
   }
 }

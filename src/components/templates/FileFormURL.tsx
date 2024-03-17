@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "../ui/label";
 import { useFormState, useFormStatus } from "react-dom";
 import { processFile } from "@/actions/file.actions";
 import { Loader2 } from "lucide-react";
+import { useFeedState } from "@/context/FeedContext";
 
 export function SubmitButton() {
   const { pending } = useFormStatus();
@@ -40,16 +41,24 @@ export type InitialState<T> =
   | {
       success: false;
       message: string;
+      data: null;
     };
 
 const initialState: InitialState<Data> = {
   success: false,
   message: "",
+  data: null,
 };
 
 const FileFormURL = () => {
   const [state, formAction] = useFormState(processFile, initialState);
-  const [keys, setKeys] = useState<Data["keys"]>();
+  const { setFeedData } = useFeedState();
+
+  useEffect(() => {
+    if (state.success) {
+      setFeedData({ data: state.data });
+    }
+  }, [state.success, state.data]);
 
   return (
     <div>
@@ -59,8 +68,6 @@ const FileFormURL = () => {
           <SubmitButton />
         </form>
       </div>
-      {state.success && <pre>{JSON.stringify(state.data.keys, null, 2)}</pre>}
-      {state.success && <pre>{JSON.stringify(state.data.result, null, 2)}</pre>}
     </div>
   );
 };
