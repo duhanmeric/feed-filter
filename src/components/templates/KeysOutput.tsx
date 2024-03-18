@@ -18,6 +18,8 @@ const KeysOutput = () => {
   const handleChange = (e: CheckedState, column: string) => {
     if (e) {
       setLocalKeys([...localKeys, column]);
+    } else {
+      setLocalKeys(localKeys.filter((key) => key !== column));
     }
   };
 
