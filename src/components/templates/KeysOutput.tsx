@@ -26,6 +26,10 @@ const KeysOutput = () => {
   };
 
   const proceedWithSpecKeys = () => {
+    if (localKeys.length === 0) {
+      alert("Please select at least one key.");
+      return;
+    }
     console.log("proceed with specific keys");
   };
 
