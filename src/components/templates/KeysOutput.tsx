@@ -3,37 +3,16 @@
 import { useFeedState } from "@/context/FeedContext";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
-import { useState } from "react";
-import { FeedKey } from "./FileFormURL";
-import { CheckedState } from "@radix-ui/react-checkbox";
+import useSelectKey from "@/hooks/useSelectKey";
 
 const KeysOutput = () => {
-  const [localKeys, setLocalKeys] = useState<FeedKey>([]);
+  const { handleChange, proceedWithAllKeys, proceedWithSpecKeys } =
+    useSelectKey();
   const { feedKeys } = useFeedState();
 
   if (!feedKeys) {
     return <div className="mt-4">Sorry, there is no key.</div>;
   }
-
-  const handleChange = (e: CheckedState, column: string) => {
-    if (e) {
-      setLocalKeys([...localKeys, column]);
-    } else {
-      setLocalKeys(localKeys.filter((key) => key !== column));
-    }
-  };
-
-  const proceedWithAllKeys = () => {
-    console.log("proceed with all keys");
-  };
-
-  const proceedWithSpecKeys = () => {
-    if (localKeys.length === 0) {
-      alert("Please select at least one key.");
-      return;
-    }
-    console.log("proceed with specific keys");
-  };
 
   return (
     <div>
