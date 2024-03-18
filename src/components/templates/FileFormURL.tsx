@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "../ui/label";
 import { useFormState, useFormStatus } from "react-dom";
-import { processFile } from "@/actions/file.actions";
+import { extractKeys } from "@/actions/file.actions";
 import { Loader2 } from "lucide-react";
 import { useFeedState } from "@/context/FeedContext";
 
@@ -26,11 +26,13 @@ export function SubmitButton() {
   );
 }
 
+export type FeedKey = string[];
+
 export type Data = {
   keys: string[];
-  result: {
-    [key: string]: string;
-  }[];
+  // result: {
+  //   [key: string]: string;
+  // }[];
 };
 
 export type InitialState<T> =
@@ -44,19 +46,20 @@ export type InitialState<T> =
       data: null;
     };
 
-const initialState: InitialState<Data> = {
+const initialState: InitialState<FeedKey> = {
   success: false,
   message: "",
   data: null,
 };
 
 const FileFormURL = () => {
-  const [state, formAction] = useFormState(processFile, initialState);
-  const { setFeedData } = useFeedState();
+  const [state, formAction] = useFormState(extractKeys, initialState);
+  const { feedKeys, setFeedKeyData } = useFeedState();
 
   useEffect(() => {
     if (state.success) {
-      setFeedData({ data: state.data });
+      // console.log(state.data, state.success);
+      setFeedKeyData(state.data);
     }
   }, [state.success, state.data]);
 

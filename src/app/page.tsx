@@ -1,6 +1,7 @@
-import FileForm from "@/components/templates/FileForm";
+// import FileForm from "@/components/templates/FileForm";
 import FileFormURL from "@/components/templates/FileFormURL";
-import FileOutput from "@/components/templates/FileOutput";
+// import FileOutput from "@/components/templates/FileOutput";
+import KeysOutput from "@/components/templates/KeysOutput";
 import { FeedStateProvider } from "@/context/FeedContext";
 
 export default function Home() {
@@ -9,7 +10,8 @@ export default function Home() {
       {/* <FileForm /> */}
       <FeedStateProvider>
         <FileFormURL />
-        <FileOutput />
+        <KeysOutput />
+        {/* <FileOutput /> */}
       </FeedStateProvider>
     </main>
   );
