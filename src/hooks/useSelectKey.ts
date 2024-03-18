@@ -22,6 +22,7 @@ const useSelectKey = () => {
       alert("Please select at least one key.");
       return;
     }
+
     console.log("proceed with specific keys");
   };
 

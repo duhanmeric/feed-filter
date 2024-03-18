@@ -12,6 +12,7 @@ import { promisify } from "util";
 import sax from "sax";
 import Readline from "readline";
 import { JSDOM } from "jsdom";
+import { redirect } from "next/navigation";
 
 const getRawTagName = (tag: string): string => {
   const endIndex = tag.indexOf(">");
@@ -22,7 +23,7 @@ const getRawTagName = (tag: string): string => {
 export async function extractKeys(
   prevState: any,
   formData: FormData
-): Promise<InitialState<FeedKey>> {
+): Promise<InitialState<string>> {
   console.log("istek geldi");
 
   const filePath = path.join(process.cwd(), "public", "product.xml");
@@ -57,12 +58,16 @@ export async function extractKeys(
       const startIndex = keyArr.indexOf(currentItemTag);
       const filteredKeys = keyArr.slice(startIndex + 1);
 
+      const encodedKeys = encodeURIComponent(JSON.stringify(filteredKeys));
+      const redirectUrl = `/keys?q=${encodedKeys}`;
+      console.log(redirectUrl);
+
       // console.log(keyArr, startIndex, filteredKeys);
 
       readStream.destroy();
       resolve({
         success: true,
-        data: filteredKeys,
+        data: redirectUrl,
       });
     });
 

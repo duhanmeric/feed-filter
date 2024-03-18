@@ -8,6 +8,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { extractKeys } from "@/actions/file.actions";
 import { Loader2 } from "lucide-react";
 import { useFeedState } from "@/context/FeedContext";
+import { useRouter } from "next/navigation";
 
 export function SubmitButton() {
   const { pending } = useFormStatus();
@@ -46,7 +47,7 @@ export type InitialState<T> =
       data: null;
     };
 
-const initialState: InitialState<FeedKey> = {
+const initialState: InitialState<string> = {
   success: false,
   message: "",
   data: null,
@@ -54,14 +55,16 @@ const initialState: InitialState<FeedKey> = {
 
 const FileFormURL = () => {
   const [state, formAction] = useFormState(extractKeys, initialState);
-  const { feedKeys, setFeedKeyData } = useFeedState();
+  const router = useRouter();
+
+  // const { feedKeys, setFeedKeyData } = useFeedState();
 
   useEffect(() => {
     if (state.success) {
-      // console.log(state.data, state.success);
-      setFeedKeyData(state.data);
+      console.log(state.data);
+      router.push(state.data);
     }
-  }, [state.success, state.data]);
+  }, [state.success, state.data, router]);
 
   return (
     <div>
