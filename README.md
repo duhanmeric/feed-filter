@@ -4,3 +4,5 @@
 - [ ] custom koşul yazılabilsin
 
 - [ ] url limiti ekle
+
+- [ ] dosya linki girilip curl atılsın
