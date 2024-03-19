@@ -56,7 +56,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      {/* <div className="flex items-center py-4">
         <Input
           placeholder="Filter the feed..."
           value={(table.getColumn("Name")?.getFilterValue() as string) ?? ""}
@@ -65,7 +65,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-      </div>
+      </div> */}
       <div className="flex gap-4 flex-wrap mb-10">
         {table
           .getAllColumns()

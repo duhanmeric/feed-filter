@@ -61,7 +61,6 @@ const FileFormURL = () => {
 
   useEffect(() => {
     if (state.success) {
-      console.log(state.data);
       router.push(state.data);
     }
   }, [state.success, state.data, router]);

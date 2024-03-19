@@ -15,9 +15,10 @@ import { JSDOM } from "jsdom";
 import { redirect } from "next/navigation";
 
 const getRawTagName = (tag: string): string => {
+  // Tag'in başlangıç ve bitiş işaretlerini kontrol et ve içeriği al
+  const startIndex = tag.startsWith("</") ? 2 : 1;
   const endIndex = tag.indexOf(">");
-  const cleanTag = endIndex !== -1 ? tag.substring(0, endIndex) : tag;
-  return cleanTag.replace(/[^a-zA-Z]+/g, "");
+  return tag.substring(startIndex, endIndex);
 };
 
 export async function extractKeys(
@@ -26,7 +27,7 @@ export async function extractKeys(
 ): Promise<InitialState<string>> {
   console.log("istek geldi");
 
-  const filePath = path.join(process.cwd(), "public", "product.xml");
+  const filePath = path.join(process.cwd(), "public", "fullFile.xml");
   const readStream = fs.createReadStream(filePath);
   const rl = Readline.createInterface({
     input: readStream,
@@ -48,6 +49,8 @@ export async function extractKeys(
       } else if (trimmedLine.startsWith("</")) {
         isItemFound = true;
         currentItemTag = getRawTagName(trimmedLine);
+        console.log("currentItemTag", currentItemTag);
+
         rl.close();
       }
     });
@@ -60,11 +63,9 @@ export async function extractKeys(
 
       const encodedKeys = encodeURIComponent(JSON.stringify(filteredKeys));
       const redirectUrl = `/keys?q=${encodedKeys}`;
-      console.log(redirectUrl);
-
-      // console.log(keyArr, startIndex, filteredKeys);
 
       readStream.destroy();
+
       resolve({
         success: true,
         data: redirectUrl,
@@ -81,47 +82,47 @@ export async function extractKeys(
     });
   });
 }
+type ItemObj = {
+  [key: string]: string;
+};
+export async function processFile(desiredTags: string[]) {
+  const readFileAsync = promisify(fs.readFile);
 
-// export async function processFile(
-//   prevState: any,
-//   formData: FormData
-// ): Promise<InitialState<Data>> {
-//   const readFileAsync = promisify(fs.readFile);
+  const filePath = path.join(process.cwd(), "public", "fullFile.xml");
 
-//   const filePath = path.join(process.cwd(), "public", "product.xml");
+  try {
+    const data = await readFileAsync(filePath, "utf8");
 
-//   try {
-//     const data = await readFileAsync(filePath, "utf8");
+    const result = await parseStringPromise(data, {
+      explicitArray: false,
+      mergeAttrs: true,
+      explicitRoot: false,
+      attrkey: "deneme",
+    });
 
-//     await new Promise((resolve) => setTimeout(resolve, 1000));
+    const mainKey = Object.keys(result)[0];
+    const itemArr: ItemObj[] = result[mainKey];
 
-//     const result = await parseStringPromise(data, {
-//       explicitArray: false,
-//       mergeAttrs: true,
-//       explicitRoot: false,
-//     });
+    const filteredArr = itemArr.map((item) => {
+      const filteredItem: ItemObj = {};
+      desiredTags.forEach((tag: string) => {
+        if (item.hasOwnProperty(tag)) {
+          filteredItem[tag] = item[tag];
+        }
+      });
+      return filteredItem;
+    });
 
-//     const mainKey = Object.keys(result)[0];
-//     const itemArr = result[mainKey];
-
-//     const keys = itemArr.length > 0 ? Object.keys(itemArr[0]) : [];
-
-//     // console.log("Parsed XML:", itemArr, result, keys);
-//     console.log(itemArr.length);
-
-//     return {
-//       success: true,
-//       data: {
-//         result: itemArr,
-//         keys,
-//       },
-//     };
-//   } catch (error) {
-//     console.error("Error processing the XML file:", error);
-//     return {
-//       success: false,
-//       message: error instanceof Error ? error.message : "An error occurred",
-//       data: null,
-//     };
-//   }
-// }
+    return {
+      success: true,
+      data: filteredArr,
+    };
+  } catch (error) {
+    console.error("Error processing the XML file:", error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "An error occurred",
+      data: null,
+    };
+  }
+}

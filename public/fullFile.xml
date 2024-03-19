@@ -58,7 +58,7 @@
     <Inventory_Count>8</Inventory_Count>
     <Date_Created>2018-03-20 22:24:21</Date_Created>
   </Product>
-  <!-- <Product>
+  <Product>
     <Product_ID>8100</Product_ID>
     <SKU>WKS-6016</SKU>
     <Name>Uptown Girl Blouse</Name>
@@ -579,5 +579,5 @@
     <Rating_Count>3</Rating_Count>
     <Inventory_Count>11</Inventory_Count>
     <Date_Created>2018-03-16 22:17:50</Date_Created>
-  </Product> -->
+  </Product>
 </Products>

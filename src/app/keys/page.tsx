@@ -11,10 +11,7 @@ export default function KeyPage({
     return <div>No keys found</div>;
   }
 
-  // console.log(q);
-
   const parsedUrl = JSON.parse(decodeURIComponent(q));
-  // console.log(parsedUrl);
 
   return (
     <main className="h-full p-4">

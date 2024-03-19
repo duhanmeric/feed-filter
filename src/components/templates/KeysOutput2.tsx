@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,8 +10,10 @@ type Props = {
 };
 
 const KeysOutput2 = ({ keys }: Props) => {
-  const { handleChange, proceedWithAllKeys, proceedWithSpecKeys } =
+  const { localKeys, handleChange, proceedWithAllKeys, proceedWithSpecKeys } =
     useSelectKey();
+
+  console.log(localKeys);
 
   return (
     <div>
