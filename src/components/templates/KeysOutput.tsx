@@ -1,31 +1,32 @@
 "use client";
 
-import { useFeedState } from "@/context/FeedContext";
-import { Checkbox } from "../ui/checkbox";
+import React from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "../ui/button";
 import useSelectKey from "@/hooks/useSelectKey";
 
-const KeysOutput = () => {
-  const { handleChange, proceedWithAllKeys, proceedWithSpecKeys } =
-    useSelectKey();
-  const { feedKeys } = useFeedState();
+type Props = {
+  keys: string[];
+};
 
-  if (!feedKeys) {
-    return <div className="mt-4">Sorry, there is no key.</div>;
-  }
+const KeysOutput2 = ({ keys }: Props) => {
+  const { localKeys, handleChange, proceedWithAllKeys, proceedWithSpecKeys } =
+    useSelectKey();
+
+  console.log(localKeys);
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mt-10 mb-1">
+      <h1 className="text-2xl font-bold mb-1">
         These are the keys that your XML file has.
       </h1>
       <p className="mb-4">
         Please select the keys you want to use for filtering.
       </p>
-      <div className="grid grid-cols-3 mb-10">
-        {feedKeys.map((column) => {
+      <div className="grid grid-cols-3 gap-y-3 mb-10">
+        {keys.map((column: string) => {
           return (
-            <div key={column} className="space-x-2">
+            <div key={column} className="gap-2 flex items-center">
               <Checkbox
                 id={column}
                 onCheckedChange={(e) => handleChange(e, column)}
@@ -50,4 +51,4 @@ const KeysOutput = () => {
   );
 };
 
-export default KeysOutput;
+export default KeysOutput2;

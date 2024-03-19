@@ -3,19 +3,11 @@
 import path from "path";
 import fs from "fs";
 import { parseStringPromise } from "xml2js";
-import {
-  Data,
-  FeedKey,
-  InitialState,
-} from "@/components/templates/FileFormURL";
 import { promisify } from "util";
-import sax from "sax";
 import Readline from "readline";
-import { JSDOM } from "jsdom";
-import { redirect } from "next/navigation";
 
+// Tag'in başlangıç ve bitiş işaretlerini kontrol et ve içeriği al
 const getRawTagName = (tag: string): string => {
-  // Tag'in başlangıç ve bitiş işaretlerini kontrol et ve içeriği al
   const startIndex = tag.startsWith("</") ? 2 : 1;
   const endIndex = tag.indexOf(">");
   return tag.substring(startIndex, endIndex);
@@ -24,7 +16,7 @@ const getRawTagName = (tag: string): string => {
 export async function extractKeys(
   prevState: any,
   formData: FormData
-): Promise<InitialState<string>> {
+): Promise<ActionReturn<string>> {
   console.log("istek geldi");
 
   const filePath = path.join(process.cwd(), "public", "fullFile.xml");
@@ -49,8 +41,6 @@ export async function extractKeys(
       } else if (trimmedLine.startsWith("</")) {
         isItemFound = true;
         currentItemTag = getRawTagName(trimmedLine);
-        console.log("currentItemTag", currentItemTag);
-
         rl.close();
       }
     });
@@ -82,9 +72,9 @@ export async function extractKeys(
     });
   });
 }
-type ItemObj = {
-  [key: string]: string;
-};
+
+type ItemObj = { [key: string]: string };
+
 export async function processFile(desiredTags: string[]) {
   const readFileAsync = promisify(fs.readFile);
 

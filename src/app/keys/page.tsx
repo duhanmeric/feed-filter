@@ -1,4 +1,4 @@
-import KeysOutput2 from "@/components/templates/KeysOutput2";
+import KeysOutput from "@/components/templates/KeysOutput";
 
 export default function KeyPage({
   searchParams,
@@ -15,7 +15,7 @@ export default function KeyPage({
 
   return (
     <main className="h-full p-4">
-      <KeysOutput2 keys={parsedUrl} />
+      <KeysOutput keys={parsedUrl} />
     </main>
   );
 }
