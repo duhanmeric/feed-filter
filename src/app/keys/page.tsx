@@ -11,13 +11,14 @@ export default function KeyPage({
     return <div>No keys found</div>;
   }
 
+  // console.log(q);
+
   const parsedUrl = JSON.parse(decodeURIComponent(q));
-  console.log(parsedUrl);
+  // console.log(parsedUrl);
 
   return (
-    <div>
-      <h1>Key Page</h1>
+    <main className="h-full p-4">
       <KeysOutput2 keys={parsedUrl} />
-    </div>
+    </main>
   );
 }
