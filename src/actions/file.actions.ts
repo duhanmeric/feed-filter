@@ -1,88 +1,11 @@
 "use server";
 
 import path from "path";
-import fs, { createWriteStream } from "fs";
+import fs, { existsSync, mkdirSync } from "fs";
 import { parseStringPromise } from "xml2js";
 import { promisify } from "util";
-import Readline from "readline";
-import axios, { AxiosError } from "axios";
-
-const getRawTagName = (tag: string): string => {
-  const startIndex = tag.startsWith("</") ? 2 : 1;
-  const endIndex = tag.indexOf(">");
-  return tag.substring(startIndex, endIndex);
-};
-
-const getExtensionFromContentType = (contentType: string): string => {
-  const extensionMap: { [key: string]: string } = {
-    "text/xml": ".xml",
-    "application/json": ".json",
-  };
-  return extensionMap[contentType] || "";
-};
-
-const downloadFile = async (
-  url: string,
-  outputPath: string
-): Promise<string> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await axios.get(url, { responseType: "stream" });
-      const extension = getExtensionFromContentType(
-        response.headers["content-type"]
-      );
-      const fullOutputPath = outputPath + extension;
-      const writer = createWriteStream(fullOutputPath);
-
-      response.data.pipe(writer);
-
-      writer.on("finish", () => resolve(fullOutputPath));
-      writer.on("error", (error) =>
-        reject(new Error(`Error writing the file: ${error.message}`))
-      );
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        reject(new Error(`Error downloading the file: ${error.message}`));
-      } else {
-        reject(new Error("An unexpected error occurred"));
-      }
-    }
-  });
-};
-
-const extractKeysFromXML = (filePath: string): Promise<Set<string>> => {
-  const readStream = fs.createReadStream(filePath);
-  const rl = Readline.createInterface({
-    input: readStream,
-    crlfDelay: Infinity,
-  });
-
-  let keys = new Set<string>();
-  let isItemFound = false;
-
-  return new Promise((resolve, reject) => {
-    rl.on("line", (line) => {
-      if (isItemFound) return;
-
-      const trimmedLine = line.trim();
-
-      if (trimmedLine.startsWith("<") && !trimmedLine.startsWith("</")) {
-        keys.add(getRawTagName(trimmedLine));
-      } else if (trimmedLine.startsWith("</")) {
-        isItemFound = true;
-        rl.close();
-      }
-    });
-
-    rl.on("close", () => {
-      resolve(keys);
-    });
-
-    rl.on("error", (error) => {
-      reject(error);
-    });
-  });
-};
+import { AxiosError } from "axios";
+import { downloadFile, extractKeysFromXML } from "./helpers";
 
 export async function extractKeys(
   prevState: any,
@@ -105,6 +28,11 @@ export async function extractKeys(
     Date.now().toString()
   );
 
+  const directory = path.dirname(outputPath);
+  if (!existsSync(directory)) {
+    mkdirSync(directory, { recursive: true });
+  }
+
   try {
     const downloadedFilePath = await downloadFile(url, outputPath);
     const keys = await extractKeysFromXML(downloadedFilePath);
@@ -114,14 +42,6 @@ export async function extractKeys(
 
     return { success: true, data: redirectUrl };
   } catch (error) {
-    console.log("Hata nesnesi:", error);
-    console.log("Hata türü:", typeof error);
-    if (error instanceof Error) {
-      console.log("Hata mesajı:", error.message);
-    } else {
-      console.log("Yakalanan hata bir Error nesnesi değil.");
-    }
-
     return {
       success: false,
       message:
