@@ -49,9 +49,9 @@ const FileFormURL = () => {
         description: "Please take a seat while we are processing your file.",
       });
 
-      setTimeout(() => {
-        router.push(state.data);
-      }, 1000);
+      router.push(state.data);
+      // setTimeout(() => {
+      // }, 1000);
     } else {
       // success false durumu
       if (state.message) {

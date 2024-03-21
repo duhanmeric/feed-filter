@@ -5,17 +5,17 @@ export default function FilePage({
 }: {
   searchParams?: { [key: string]: string };
 }) {
-  const { q } = searchParams || {};
+  const { name } = searchParams || {};
 
-  if (!q) {
+  if (!name) {
     return <div>No keys found</div>;
   }
 
-  const parsedUrl = JSON.parse(decodeURIComponent(q)) as string[];
+  const fileNameFromUrl = name as string;
 
   return (
     <main className="h-full p-4">
-      <FileOutput keys={parsedUrl} />
+      <FileOutput fileName={fileNameFromUrl} />
     </main>
   );
 }

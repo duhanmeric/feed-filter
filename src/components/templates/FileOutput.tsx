@@ -6,28 +6,35 @@ import { ColumnDef } from "@tanstack/react-table";
 import { processFile } from "@/actions/file.actions";
 
 type Props = {
-  keys: string[];
+  fileName: string;
 };
 
-const FileOutput = ({ keys }: Props) => {
+const FileOutput = ({ fileName }: Props) => {
   const [localFile, setLocalFile] = useState<
     { [key: string]: string }[] | null
   >(null);
+  const [localKeys, setLocalKeys] = useState<string[]>([]);
 
   useEffect(() => {
     const getFile = async () => {
-      const res = await processFile(keys);
+      const res = await processFile(fileName);
+      console.log(res);
 
       if (res.success) {
-        setLocalFile(res.data);
+        console.log(res.data);
+
+        if (res.data?.keys) {
+          setLocalKeys(res.data.keys);
+        }
+        setLocalFile(res.data?.items);
       }
     };
 
     getFile();
-  }, [keys]);
+  }, [fileName]);
 
   const columns: ColumnDef<any>[] =
-    keys.map((key: string) => ({
+    localKeys.map((key: string) => ({
       accessorKey: key,
       header: key.charAt(0).toUpperCase() + key.slice(1),
     })) ?? [];

@@ -9,11 +9,16 @@ export const getRawTagName = (tag: string): string => {
 };
 
 export const getExtensionFromContentType = (contentType: string): string => {
-    const extensionMap: { [key: string]: string } = {
-        "text/xml": ".xml",
-        "application/json": ".json",
-    };
-    return extensionMap[contentType] || "";
+    if (contentType.includes("xml")) {
+        return ".xml";
+    }
+
+    throw new Error("Unsupported content type");
+    // const extensionMap: { [key: string]: string } = {
+    //     "text/xml": ".xml",
+    //     "application/json": ".json",
+    // };
+    // return extensionMap[contentType] || "";
 };
 
 export const downloadFile = async (
@@ -23,6 +28,8 @@ export const downloadFile = async (
     return new Promise(async (resolve, reject) => {
         try {
             const response = await axios.get(url, { responseType: "stream" });
+            // console.log(response);
+
             const extension = getExtensionFromContentType(
                 response.headers["content-type"]
             );
@@ -55,6 +62,10 @@ export const extractKeysFromXML = (filePath: string): Promise<Set<string>> => {
 
     let keys = new Set<string>();
     let isItemFound = false;
+    let currentItemTag = "";
+
+    let depth = 0;
+    let depthMap = new Map();
 
     return new Promise((resolve, reject) => {
         rl.on("line", (line) => {
@@ -62,15 +73,36 @@ export const extractKeysFromXML = (filePath: string): Promise<Set<string>> => {
 
             const trimmedLine = line.trim();
 
-            if (trimmedLine.startsWith("<") && !trimmedLine.startsWith("</")) {
-                keys.add(getRawTagName(trimmedLine));
+            const tagName = getRawTagName(trimmedLine);
+
+            if (trimmedLine.startsWith("<") && !trimmedLine.startsWith("</") && !trimmedLine.startsWith("<?")) {
             } else if (trimmedLine.startsWith("</")) {
+                depth--;
                 isItemFound = true;
+                currentItemTag = getRawTagName(trimmedLine);
                 rl.close();
             }
         });
 
+
+        const deneme = {
+            "rss": "0",
+            "channel": "1",
+            "item": "2",
+            "id": "3",
+            "shipping": "3",
+            "price": "4"
+        }
+
         rl.on("close", () => {
+            const keyArr = Array.from(keys);
+            const startIndex = keyArr.indexOf(currentItemTag);
+            const filteredKeys = keyArr.slice(startIndex + 1);
+
+            console.log(depthMap);
+
+            // console.log(keyArr, startIndex, filteredKeys);
+
             resolve(keys);
         });
 
