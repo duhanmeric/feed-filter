@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { useToast } from "../ui/use-toast";
 
 export function SubmitButton() {
   const { pending } = useFormStatus();
@@ -35,14 +36,33 @@ const ActionReturn: ActionReturn<string> = {
 const FileFormURL = () => {
   const [state, formAction] = useFormState(extractKeys, ActionReturn);
   const router = useRouter();
+  const { toast } = useToast();
+
+  function isSuccess<T>(state: ActionReturn<T>): state is { success: true; data: T } {
+    return state.success;
+  }
 
   useEffect(() => {
-    console.log(state);
+    if (isSuccess(state)) {
+      toast({
+        title: "Success!",
+        description: "Please take a seat while we are processing your file.",
+      });
 
-    if (state.success) {
-      // router.push(state.data);
+      setTimeout(() => {
+        router.push(state.data);
+      }, 1000);
+    } else {
+      // success false durumu
+      if (state.message) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: state.message,
+        });
+      }
     }
-  }, [state.success, state, state.data, router]);
+  }, [state, toast, router]);
 
   return (
     <div className="flex flex-col justify-center items-center h-full ">
@@ -75,6 +95,9 @@ const FileFormURL = () => {
           </div>
           <SubmitButton />
         </form>
+        {/* <button onClick={() => toast({
+          description: "Your message has been sent.",
+        })}>click</button> */}
       </div>
     </div>
   );
