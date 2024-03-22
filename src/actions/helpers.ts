@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createReadStream, createWriteStream } from "fs";
+import { createReadStream, createWriteStream, promises as fsPromises } from "fs";
 import Readline from "readline";
 
 export const getRawTagName = (tag: string): string => {
@@ -28,8 +28,6 @@ export const downloadFile = async (
     return new Promise(async (resolve, reject) => {
         try {
             const response = await axios.get(url, { responseType: "stream" });
-            // console.log(response);
-
             const extension = getExtensionFromContentType(
                 response.headers["content-type"]
             );
@@ -39,7 +37,10 @@ export const downloadFile = async (
 
             response.data.pipe(writer);
 
-            writer.on("finish", () => resolve(fullOutputPath));
+            writer.on("finish", async () => {
+                const content = await fsPromises.readFile(fullOutputPath, { encoding: 'utf8' });
+                resolve(content);
+            });
             writer.on("error", (error) =>
                 reject(new Error(`Error writing the file: ${error.message}`))
             );
@@ -110,4 +111,26 @@ export const extractKeysFromXML = (filePath: string): Promise<Set<string>> => {
             reject(error);
         });
     });
+};
+
+export function findFirstArray(data: any): any {
+    if (Array.isArray(data)) {
+        return data;
+    } else if (typeof data === 'object' && data !== null) {
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                const result = findFirstArray(data[key]);
+                if (result) return result;
+            }
+        }
+    }
+    return null;
+}
+
+export const splitArrayIntoChunks = (array: any[], chunkSize: number) => {
+    const chunks = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+        chunks.push(array.slice(i, i + chunkSize));
+    }
+    return chunks;
 };

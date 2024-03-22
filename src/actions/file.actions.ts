@@ -6,6 +6,7 @@ import { parseStringPromise } from "xml2js";
 import { promisify } from "util";
 import { AxiosError } from "axios";
 import { downloadFile, extractKeysFromXML } from "./helpers";
+import { redirect } from "next/navigation";
 
 
 function findFirstArray(data: any): any {
@@ -26,6 +27,7 @@ export async function extractKeys(
   prevState: any,
   formData: FormData
 ): Promise<ActionReturn<string>> {
+
   const url = formData.get("fileUrl") as string;
 
   if (!url) {

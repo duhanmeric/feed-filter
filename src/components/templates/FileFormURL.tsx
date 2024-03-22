@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { useFormState, useFormStatus } from "react-dom";
-import { extractKeys } from "@/actions/file.actions";
+import { useFormStatus } from "react-dom";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
+import { fileDownload } from "@/actions/file";
 
 export function SubmitButton() {
   const { pending } = useFormStatus();
@@ -27,42 +26,24 @@ export function SubmitButton() {
   );
 }
 
-const ActionReturn: ActionReturn<string> = {
-  success: false,
-  message: "",
-  data: null,
-};
-
 const FileFormURL = () => {
-  const [state, formAction] = useFormState(extractKeys, ActionReturn);
-  const router = useRouter();
   const { toast } = useToast();
 
-  function isSuccess<T>(state: ActionReturn<T>): state is { success: true; data: T } {
-    return state.success;
-  }
-
-  useEffect(() => {
-    if (isSuccess(state)) {
+  const clientAction = async (formData: FormData) => {
+    const result = await fileDownload(formData);
+    if (result?.message) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: result.message,
+      });
+    } else {
       toast({
         title: "Success!",
         description: "Please take a seat while we are processing your file.",
       });
-
-      router.push(state.data);
-      // setTimeout(() => {
-      // }, 1000);
-    } else {
-      // success false durumu
-      if (state.message) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: state.message,
-        });
-      }
     }
-  }, [state, toast, router]);
+  }
 
   return (
     <div className="flex flex-col justify-center items-center h-full ">
@@ -71,33 +52,17 @@ const FileFormURL = () => {
       </span>
 
       <div className="flex justify-center items-center h-full  max-w-md w-full">
-        <form action={formAction} className="w-full space-y-4">
-          {/* <div>
-            <Label htmlFor="fileName">File Name</Label>
-            <Input
-              placeholder="File Name"
-              id="fileName"
-              name="fileName"
-              required
-            />
-          </div> */}
+        <form action={clientAction} className="w-full space-y-4">
           <div>
             <Label htmlFor="fileUrl">Feed URL</Label>
             <Input
               placeholder="Feed URL..."
               id="fileUrl"
               name="fileUrl"
-              required
             />
-            {!state.success && state.message && (
-              <p className="text-red-500 text-sm mt-2">{state.message}</p>
-            )}
           </div>
           <SubmitButton />
         </form>
-        {/* <button onClick={() => toast({
-          description: "Your message has been sent.",
-        })}>click</button> */}
       </div>
     </div>
   );
