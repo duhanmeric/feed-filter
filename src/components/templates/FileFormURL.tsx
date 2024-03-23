@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
-import { fileDownload } from "@/actions/file";
+import { deleteFiles, fileDownload } from "@/actions/file";
 
 export function SubmitButton() {
   const { pending } = useFormStatus();
@@ -43,7 +43,7 @@ const FileFormURL = () => {
         description: "Please take a seat while we are processing your file.",
       });
     }
-  }
+  };
 
   return (
     <div className="flex flex-col justify-center items-center h-full ">
@@ -55,15 +55,14 @@ const FileFormURL = () => {
         <form action={clientAction} className="w-full space-y-4">
           <div>
             <Label htmlFor="fileUrl">Feed URL</Label>
-            <Input
-              placeholder="Feed URL..."
-              id="fileUrl"
-              name="fileUrl"
-            />
+            <Input placeholder="Feed URL..." id="fileUrl" name="fileUrl" />
           </div>
           <SubmitButton />
         </form>
       </div>
+      <form action={deleteFiles}>
+        <Button variant="destructive">Delete Files</Button>
+      </form>
     </div>
   );
 };
