@@ -1,3 +1,5 @@
+import KeyFilter from "@/components/templates/KeyFilter";
+
 export default function FilterPage({
   searchParams,
 }: {
@@ -18,20 +20,9 @@ export default function FilterPage({
 
   return (
     <main className="h-full p-4">
-      {fileNameFromUrl}
+      Your file name: {fileNameFromUrl}
       <br />
-      {fileKeysFromUrl.map((column: string) => {
-        return (
-          <div key={column} className="gap-2 flex items-center">
-            <label
-              htmlFor={column}
-              className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              {column}
-            </label>
-          </div>
-        );
-      })}
+      <KeyFilter keys={fileKeysFromUrl} />
     </main>
   );
 }

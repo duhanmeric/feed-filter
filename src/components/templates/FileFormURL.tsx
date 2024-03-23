@@ -46,7 +46,7 @@ const FileFormURL = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-full ">
+    <div className="flex flex-col justify-center items-center h-full">
       <span>
         https://www.baqa.com.tr/XMLExport/5E8A9B3E8A984DED8CE5D667CB56B5B9
       </span>
