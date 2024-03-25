@@ -3,16 +3,16 @@
 
 ---
 
-- [ ] error handling --devam
+- [x] error handling --devam
 
 ---
 
+- [ ] timeout süresi ekle
 - [ ] url limiti ekle
+- [ ] json'ları pagination mantığıyla yolla
+- [ ] dosyaları sil
 
 ---
 
-- [ ] this is my id alanını ekle
-- [ ] custom koşul yazılabilsin
-
+- [x] custom koşul yazılabilsin
 - [x] dosya linki girilip curl atılsın
-<!-- https://www.baqa.com.tr/XMLExport/5E8A9B3E8A984DED8CE5D667CB56B5B9 -->
