@@ -70,7 +70,9 @@ export const deleteFiles = async () => {
 export const renderFile = async (formData: FormData) => {
   try {
     const formDataArr = formData.entries();
-    const groupedData: { [index: string]: { key?: string; value?: string | number } } = {};
+    const groupedData: {
+      [index: string]: { key?: string; value?: string | number };
+    } = {};
 
     for (let [key, value] of formDataArr) {
       const strValue = value as string;
@@ -79,17 +81,19 @@ export const renderFile = async (formData: FormData) => {
         throw new Error(`Form data for '${key}' cannot be empty.`);
       }
 
-      const [index, property] = key.split('?', 2);
+      const [index, property] = key.split("?", 2);
 
       if (!groupedData[index]) {
-        groupedData[index] = { key: '', value: '' };
+        groupedData[index] = { key: "", value: "" };
       }
 
-      if (property === 'dataType') {
+      if (property === "dataType") {
         if (strValue === "number") {
           const numberValue = Number(groupedData[index].value);
           if (isNaN(numberValue)) {
-            throw new Error(`The value for '${groupedData[index].key}' is not a valid number.`);
+            throw new Error(
+              `The value for '${groupedData[index].key}' is not a valid number.`
+            );
           }
           groupedData[index].value = numberValue;
         }
@@ -99,9 +103,9 @@ export const renderFile = async (formData: FormData) => {
       }
     }
 
-    const outputArray = Object.values(groupedData).map(item => ({
-      key: item.key ?? '',
-      value: item.value
+    const outputArray = Object.values(groupedData).map((item) => ({
+      key: item.key ?? "",
+      value: item.value,
     }));
 
     console.log(outputArray);

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { Button } from "../ui/button";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import KeyCheck from "./KeyCheck";
 import { renderFile } from "@/actions/file";
@@ -9,6 +8,7 @@ import { useToast } from "../ui/use-toast";
 import KeyInput from "./KeyInput";
 import NumberConditions from "./NumberConditions";
 import DataType from "./DataType";
+import SubmitButton from "./SubmitButton";
 
 type Props = {
   keys: string[];
@@ -16,10 +16,10 @@ type Props = {
 
 export const DATA = {
   STRING: "string",
-  NUMBER: "number"
+  NUMBER: "number",
 } as const;
 
-export type DATATYPE = typeof DATA[keyof typeof DATA];
+export type DATATYPE = (typeof DATA)[keyof typeof DATA];
 
 export type SelectedKey = {
   label: string;
@@ -41,16 +41,13 @@ const KeyFilter = ({ keys }: Props) => {
     []
   );
 
-  const updateKeyDataType = useCallback(
-    (e: DATATYPE, label: string) => {
-      setSelectedKeys((prevSelectedKeys) =>
-        prevSelectedKeys.map((key) =>
-          key.label === label ? { ...key, dataType: e } : key
-        )
-      );
-    },
-    []
-  );
+  const updateKeyDataType = useCallback((e: DATATYPE, label: string) => {
+    setSelectedKeys((prevSelectedKeys) =>
+      prevSelectedKeys.map((key) =>
+        key.label === label ? { ...key, dataType: e } : key
+      )
+    );
+  }, []);
 
   const clientAction = async (formData: FormData) => {
     const result = await renderFile(formData);
@@ -74,35 +71,45 @@ const KeyFilter = ({ keys }: Props) => {
       <h1 className="mb-2">Select your filter</h1>
       <div className="grid grid-cols-3 space-y-2">
         {keys.map((key) => (
-          <KeyCheck key={key} keyLabel={key} onCheckedChange={handleSelectKey} />
+          <KeyCheck
+            key={key}
+            keyLabel={key}
+            onCheckedChange={handleSelectKey}
+          />
         ))}
       </div>
 
       {selectedKeys.length > 0 && (
         <form className="mt-10 space-y-4" action={clientAction}>
           <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-4">
-            {
-              selectedKeys.map((key, index) => (
-                <div key={key.label} className="p-4 border border-black rounded-md self-start">
-                  <div className="w-full justify-between flex gap-4">
-                    <KeyInput
-                      name={`${index}?${key.label}`}
-                      keyLabel={key.label}
-                      placeholder={key.dataType === DATA.NUMBER ? "E.g: 5000" : "Enter value"}
-                    />
-                    <DataType name={`${index}?dataType`} dataType={key.dataType} keyLabel={key.label} updateKeyDataType={updateKeyDataType} />
-                  </div>
-                  {key.dataType === DATA.NUMBER && (
-                    <NumberConditions keyLabel={key.label} />
-                  )}
+            {selectedKeys.map((key, index) => (
+              <div
+                key={key.label}
+                className="p-4 border border-black rounded-md self-start"
+              >
+                <div className="w-full justify-between flex gap-4">
+                  <KeyInput
+                    name={`${index}?${key.label}`}
+                    keyLabel={key.label}
+                    placeholder={
+                      key.dataType === DATA.NUMBER ? "E.g: 5000" : "Enter value"
+                    }
+                  />
+                  <DataType
+                    name={`${index}?dataType`}
+                    dataType={key.dataType}
+                    keyLabel={key.label}
+                    updateKeyDataType={updateKeyDataType}
+                  />
                 </div>
-              ))
-            }
+                {key.dataType === DATA.NUMBER && (
+                  <NumberConditions keyLabel={key.label} />
+                )}
+              </div>
+            ))}
           </div>
-          <div className="flex">
-            <Button type="submit" className="mt-4 ml-auto">
-              Apply filter
-            </Button>
+          <div className="max-w-32 ml-auto">
+            <SubmitButton title="Apply filter" />
           </div>
         </form>
       )}

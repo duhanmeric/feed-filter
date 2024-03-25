@@ -2,29 +2,11 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useFormStatus } from "react-dom";
-import { Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
 import { deleteFiles, fileDownload } from "@/actions/file";
-
-export function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button className="w-full" type="submit" aria-disabled={pending}>
-      {pending ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          <span>Please wait</span>
-        </>
-      ) : (
-        "Start"
-      )}
-    </Button>
-  );
-}
+import SubmitButton from "./SubmitButton";
 
 const FileFormURL = () => {
   const { toast } = useToast();
@@ -57,7 +39,7 @@ const FileFormURL = () => {
             <Label htmlFor="fileUrl">Feed URL</Label>
             <Input placeholder="Feed URL..." id="fileUrl" name="fileUrl" />
           </div>
-          <SubmitButton />
+          <SubmitButton title="Confirm" />
         </form>
       </div>
       <form action={deleteFiles}>
