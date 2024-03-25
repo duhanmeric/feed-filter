@@ -2,7 +2,7 @@ import React from 'react'
 import { Checkbox } from '../ui/checkbox'
 import { Label } from '../ui/label';
 import { CheckedState } from '@radix-ui/react-checkbox';
-import { SelectedKey } from './KeyFilter';
+import type { SelectedKey } from './KeyFilter';
 
 type Props = {
   keyLabel: string;

@@ -1,8 +1,8 @@
 import React from 'react'
-import { SelectedKey } from './KeyFilter'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import type { SelectedKey } from './KeyFilter'
 
 type Props = {
   selectedKeys: SelectedKey[];
