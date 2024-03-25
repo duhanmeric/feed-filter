@@ -66,3 +66,49 @@ export const deleteFiles = async () => {
     console.error(error);
   }
 };
+
+export const renderFile = async (formData: FormData) => {
+  try {
+    const formDataArr = formData.entries();
+    const groupedData: { [index: string]: { key?: string; value?: string | number } } = {};
+
+    for (let [key, value] of formDataArr) {
+      const strValue = value as string;
+
+      if (!strValue.trim()) {
+        throw new Error(`Form data for '${key}' cannot be empty.`);
+      }
+
+      const [index, property] = key.split('?', 2);
+
+      if (!groupedData[index]) {
+        groupedData[index] = { key: '', value: '' };
+      }
+
+      if (property === 'dataType') {
+        if (strValue === "number") {
+          const numberValue = Number(groupedData[index].value);
+          if (isNaN(numberValue)) {
+            throw new Error(`The value for '${groupedData[index].key}' is not a valid number.`);
+          }
+          groupedData[index].value = numberValue;
+        }
+      } else {
+        groupedData[index].key = property;
+        groupedData[index].value = strValue;
+      }
+    }
+
+    const outputArray = Object.values(groupedData).map(item => ({
+      key: item.key ?? '',
+      value: item.value
+    }));
+
+    console.log(outputArray);
+  } catch (error) {
+    const err = error as Error;
+    return {
+      message: err.message,
+    };
+  }
+};

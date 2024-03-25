@@ -7,9 +7,10 @@
 
 ---
 
+- [x] filter formunu submitle
+- [ ] json'ları pagination mantığıyla yolla
 - [ ] timeout süresi ekle
 - [ ] url limiti ekle
-- [ ] json'ları pagination mantığıyla yolla
 - [ ] dosyaları sil
 
 ---

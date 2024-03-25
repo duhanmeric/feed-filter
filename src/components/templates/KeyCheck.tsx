@@ -14,7 +14,7 @@ const KeyCheck = ({ keyLabel, onCheckedChange }: Props) => {
     <div className="flex items-center gap-2">
       <Checkbox
         id={keyLabel}
-        onCheckedChange={(e) => onCheckedChange(e, { label: keyLabel, dataType: "string" })}
+        onCheckedChange={(e) => onCheckedChange(e, { label: keyLabel, dataType: "string", value: "" })}
       />
       <Label htmlFor={keyLabel}>{keyLabel}</Label>
     </div>
