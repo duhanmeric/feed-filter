@@ -103,7 +103,10 @@ const KeyFilter = ({ keys }: Props) => {
                   />
                 </div>
                 {key.dataType === DATA.NUMBER && (
-                  <NumberConditions keyLabel={key.label} />
+                  <NumberConditions
+                    keyLabel={key.label}
+                    name={`${index}?condition`}
+                  />
                 )}
               </div>
             ))}

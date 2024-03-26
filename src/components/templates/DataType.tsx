@@ -11,7 +11,7 @@ import { DATA, type DATATYPE } from "./KeyFilter";
 
 type Props = {
   keyLabel: string;
-  name: string;
+  name: `${number}?dataType`;
   updateKeyDataType: (e: DATATYPE, label: string) => void;
   dataType: DATATYPE;
 };

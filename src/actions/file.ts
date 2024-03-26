@@ -71,7 +71,11 @@ export const renderFile = async (formData: FormData) => {
   try {
     const formDataArr = formData.entries();
     const groupedData: {
-      [index: string]: { key?: string; value?: string | number };
+      [index: string]: {
+        key?: string;
+        value?: string | number;
+        condition?: string;
+      };
     } = {};
 
     for (let [key, value] of formDataArr) {
@@ -97,6 +101,8 @@ export const renderFile = async (formData: FormData) => {
           }
           groupedData[index].value = numberValue;
         }
+      } else if (property === "condition") {
+        groupedData[index].condition = strValue;
       } else {
         groupedData[index].key = property;
         groupedData[index].value = strValue;
@@ -106,6 +112,7 @@ export const renderFile = async (formData: FormData) => {
     const outputArray = Object.values(groupedData).map((item) => ({
       key: item.key ?? "",
       value: item.value,
+      ...(item.condition && { condition: item.condition }),
     }));
 
     console.log(outputArray);
