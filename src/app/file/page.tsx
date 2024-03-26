@@ -1,21 +1,21 @@
 import FileOutput from "@/components/templates/FileOutput";
 
 export default function FilePage({
-  searchParams,
+    searchParams,
 }: {
-  searchParams?: { [key: string]: string };
+    searchParams?: { [key: string]: string };
 }) {
-  const { name } = searchParams || {};
+    const { name } = searchParams || {};
 
-  if (!name) {
-    return <div>No keys found</div>;
-  }
+    if (!name) {
+        return <div>No keys found</div>;
+    }
 
-  const fileNameFromUrl = name as string;
+    const fileNameFromUrl = name as string;
 
-  return (
-    <main className="h-full p-4">
-      <FileOutput fileName={fileNameFromUrl} />
-    </main>
-  );
+    return (
+        <main className="h-full p-4">
+            <FileOutput fileName={fileNameFromUrl} />
+        </main>
+    );
 }

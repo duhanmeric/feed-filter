@@ -8,6 +8,7 @@
 ---
 
 - [x] filter formunu submitle
+- [x] prettier setup
 - [ ] json'ları pagination mantığıyla yolla
 - [ ] timeout süresi ekle
 - [ ] url limiti ekle
