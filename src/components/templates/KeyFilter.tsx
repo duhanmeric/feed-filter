@@ -3,7 +3,7 @@
 import React, { useCallback } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import KeyCheck from "./KeyCheck";
-import { renderFile } from "@/actions/file";
+import { submitFilters } from "@/actions/file";
 import { useToast } from "../ui/use-toast";
 import KeyInput from "./KeyInput";
 import NumberConditions from "./NumberConditions";
@@ -36,8 +36,8 @@ const KeyFilter = ({ keys }: Props) => {
                 isChecked
                     ? [...prevSelectedKeys, selectedKey]
                     : prevSelectedKeys.filter(
-                          (key) => key.label !== selectedKey.label,
-                      ),
+                        (key) => key.label !== selectedKey.label,
+                    ),
             );
         },
         [],
@@ -52,7 +52,7 @@ const KeyFilter = ({ keys }: Props) => {
     }, []);
 
     const clientAction = async (formData: FormData) => {
-        const result = await renderFile(formData);
+        const result = await submitFilters(formData);
 
         if (result?.message) {
             toast({

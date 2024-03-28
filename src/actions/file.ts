@@ -78,7 +78,7 @@ export const deleteFiles = async () => {
     }
 };
 
-export const renderFile = async (formData: FormData) => {
+export const submitFilters = async (formData: FormData) => {
     try {
         const formDataArr = formData.entries();
         const groupedData: {
