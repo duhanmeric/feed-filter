@@ -13,6 +13,7 @@ import SubmitButton from "./SubmitButton";
 type Props = {
     keys: string[];
     fileName: string;
+    fileCount: number;
 };
 
 export const DATA = {
@@ -27,7 +28,7 @@ export type SelectedKey = {
     dataType: DATATYPE;
 };
 
-const KeyFilter = ({ fileName, keys }: Props) => {
+const KeyFilter = ({ fileCount, fileName, keys }: Props) => {
     const { toast } = useToast();
     const [selectedKeys, setSelectedKeys] = React.useState<SelectedKey[]>([]);
 
@@ -53,7 +54,7 @@ const KeyFilter = ({ fileName, keys }: Props) => {
     }, []);
 
     const clientAction = async (formData: FormData) => {
-        const result = await submitFilters(fileName, formData);
+        const result = await submitFilters(fileCount, fileName, formData);
 
         if (result?.message) {
             toast({

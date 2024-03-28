@@ -11,7 +11,7 @@ export const fileDownload = async (formData: FormData) => {
 
     const randomName = crypto.randomUUID();
     const outputPath = path.join(process.cwd(), "src", "uploadedFiles", randomName, randomName);
-    let keys;
+    let keys, totalFileCount = 0;
 
     try {
         if (!url) {
@@ -43,6 +43,8 @@ export const fileDownload = async (formData: FormData) => {
             );
         }
 
+        totalFileCount = arrayChunks.length;
+
         console.log(resultArr.length);
     } catch (error) {
         const err = error as Error;
@@ -51,7 +53,7 @@ export const fileDownload = async (formData: FormData) => {
         };
     }
 
-    redirect(`/filter?name=${randomName}&keys=${JSON.stringify(keys)}`);
+    redirect(`/filter?name=${randomName}&fileCount=${totalFileCount}&keys=${JSON.stringify(keys)}`);
 };
 
 export const deleteFiles = async () => {
@@ -88,7 +90,7 @@ type FilterObj = {
     [index: string]: FilterFields;
 }
 
-export const submitFilters = async (fileName: string, formData: FormData) => {
+export const submitFilters = async (totalFileCount: number, fileName: string, formData: FormData) => {
 
     let outputArray: FilterFields[] = [];
 
@@ -142,5 +144,5 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
 
     console.log(outputArray);
     const encodedOutputArray = encodeURIComponent(JSON.stringify(outputArray));
-    redirect(`/file?name=${fileName}&part=1&filters=${encodedOutputArray}`);
+    redirect(`/file?name=${fileName}&part=1&filters=${encodedOutputArray}&fileCount=${totalFileCount}`);
 };

@@ -3,6 +3,7 @@
 import path from "path";
 import { existsSync, promises as fsPromises } from "fs";
 import { FilterFields } from "@/actions/file";
+import Pagination from "./Pagination";
 
 async function getFile(baseFileName: string, part: string, filters: FilterFields[]) {
     const fileName = `${baseFileName}_part${part}.json`;
@@ -27,7 +28,7 @@ async function getFile(baseFileName: string, part: string, filters: FilterFields
         return result;
     } catch (error) {
         console.error('Error reading file:', error);
-        throw error; // Hata yönetimi için hata fırlatın
+        throw error;
     }
 }
 
@@ -37,7 +38,7 @@ export default async function FilePage({
     searchParams?: { [key: string]: string };
 }) {
 
-    const { name, part, filters } = searchParams || {};
+    const { name, part, filters, fileCount } = searchParams || {};
 
     if (!name) {
         return <div>No file name found</div>;
@@ -49,6 +50,10 @@ export default async function FilePage({
 
     if (!part) {
         return <div>No part found</div>;
+    }
+
+    if (!fileCount) {
+        return <div>No total file count found</div>;
     }
 
     const fileNameFromUrl = name as string;
@@ -65,6 +70,9 @@ export default async function FilePage({
             <div>
                 <span>{result?.length}</span> items found
                 <br />
+                Current page: {filePart}/{fileCount}
+                <br />
+                <Pagination currentPart={Number(filePart)} maxPartCount={Number(fileCount)} />
                 <pre>{JSON.stringify(result, null, 2)}</pre>
             </div>
             {/* <FileOutput fileName={fileNameFromUrl} /> */}
