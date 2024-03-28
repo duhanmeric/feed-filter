@@ -9,8 +9,8 @@ import { parseStringPromise } from "xml2js";
 export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;
 
-    const tmp = crypto.randomUUID();
-    const outputPath = path.join(process.cwd(), "src", "uploadedFiles", tmp);
+    const randomName = crypto.randomUUID();
+    const outputPath = path.join(process.cwd(), "src", "uploadedFiles", randomName, randomName);
     let keys;
 
     try {
@@ -51,17 +51,28 @@ export const fileDownload = async (formData: FormData) => {
         };
     }
 
-    redirect(`/filter?name=${tmp}&keys=${JSON.stringify(keys)}`);
+    redirect(`/filter?name=${randomName}&keys=${JSON.stringify(keys)}`);
 };
 
 export const deleteFiles = async () => {
     const directory = path.join(process.cwd(), "src", "uploadedFiles");
 
-    try {
-        const files = await fsPromises.readdir(directory);
+    const deleteRecursively = async (dir: string) => {
+        const files = await fsPromises.readdir(dir, { withFileTypes: true });
+
         for (const file of files) {
-            await fsPromises.unlink(path.join(directory, file));
+            const filePath = path.join(dir, file.name);
+            if (file.isDirectory()) {
+                await deleteRecursively(filePath);
+                await fsPromises.rmdir(filePath);
+            } else {
+                await fsPromises.unlink(filePath);
+            }
         }
+    };
+
+    try {
+        await deleteRecursively(directory);
     } catch (error) {
         console.error(error);
     }
