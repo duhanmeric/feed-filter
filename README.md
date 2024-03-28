@@ -10,14 +10,17 @@
 - [x] filter formunu submitle
 - [x] prettier setup
 - [x] her bir feed için ayrı bir dosya oluştur (adı crypto.randomUUID()'den gelecek)
-- [ ] /filter'da örnek 1 ürün koy
 - [x] json'ları pagination mantığıyla yolla
     - [x] pagination butonları ekle
     - [x] pagination'da toplam kaç sayfa var
     - [x] user kaçıncı sayfadaysa gösterilsin
+- [ ] /filter'da örnek 1 ürün koy
+- [ ] filter işlemine sayıları da ekle
+- [ ] error componenti ekle
 - [ ] timeout süresi ekle
 - [ ] url limiti ekle
 - [ ] dosyaları sil
+
 
 ---
 
