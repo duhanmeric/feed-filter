@@ -78,16 +78,22 @@ export const deleteFiles = async () => {
     }
 };
 
-export const submitFilters = async (formData: FormData) => {
+type FilterFields = {
+    key: string;
+    value: string | number;
+    condition?: string;
+}
+type FilterObj = {
+    [index: string]: FilterFields;
+}
+
+export const submitFilters = async (fileName: string, formData: FormData) => {
+
+    let outputArray: FilterFields[] = [];
+
     try {
         const formDataArr = formData.entries();
-        const groupedData: {
-            [index: string]: {
-                key?: string;
-                value?: string | number;
-                condition?: string;
-            };
-        } = {};
+        const groupedData: FilterObj = {};
 
         for (let [key, value] of formDataArr) {
             const strValue = value as string;
@@ -120,17 +126,20 @@ export const submitFilters = async (formData: FormData) => {
             }
         }
 
-        const outputArray = Object.values(groupedData).map((item) => ({
-            key: item.key ?? "",
+        outputArray = Object.values(groupedData).map((item) => ({
+            key: item.key,
             value: item.value,
             ...(item.condition && { condition: item.condition }),
         }));
 
-        console.log(outputArray);
     } catch (error) {
         const err = error as Error;
         return {
             message: err.message,
         };
     }
+
+    console.log(outputArray);
+    const encodedOutputArray = encodeURIComponent(JSON.stringify(outputArray));
+    redirect(`/file?name=${fileName}&filters=${encodedOutputArray}`);
 };

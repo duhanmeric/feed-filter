@@ -16,7 +16,7 @@ type Props = {
 const CONDITIONS = [
     {
         label: "Greater than",
-        value: "greater",
+        value: ">",
     },
     {
         label: "Greater than or equal to",

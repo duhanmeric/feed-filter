@@ -22,7 +22,7 @@ export default function FilterPage({
         <main className="h-full p-4">
             Your file name: {fileNameFromUrl}
             <br />
-            <KeyFilter keys={fileKeysFromUrl} />
+            <KeyFilter fileName={name} keys={fileKeysFromUrl} />
         </main>
     );
 }
