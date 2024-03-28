@@ -78,11 +78,12 @@ export const deleteFiles = async () => {
     }
 };
 
-type FilterFields = {
+export type FilterFields = {
     key: string;
     value: string | number;
     condition?: string;
 }
+
 type FilterObj = {
     [index: string]: FilterFields;
 }
@@ -141,5 +142,5 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
 
     console.log(outputArray);
     const encodedOutputArray = encodeURIComponent(JSON.stringify(outputArray));
-    redirect(`/file?name=${fileName}&filters=${encodedOutputArray}`);
+    redirect(`/file?name=${fileName}&part=1&filters=${encodedOutputArray}`);
 };
