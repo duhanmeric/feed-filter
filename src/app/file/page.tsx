@@ -6,7 +6,7 @@ import { FilterFields } from "@/actions/file";
 import Pagination from "./Pagination";
 import { itemPerPage } from "@/constants";
 
-async function getFile(uniqueFileId: string, page: number, filters: FilterFields[]) {
+async function getFile(uniqueFileId: string, page: number) {
     const fileName = `total_${uniqueFileId}.json`;
 
     try {
@@ -48,18 +48,18 @@ export default async function FilePage({
         return <div>No filters found</div>;
     }
 
-    if (!page) {
-        return <div>No page found</div>;
-    }
-
     if (!totalPageCount) {
         return <div>No totalPageCount found</div>;
+    }
+
+    if (!page) {
+        return <div>No page found</div>;
     }
 
     const fileNameFromUrl = name as string;
     const filtersFromUrl = decodeURIComponent(filters);
 
-    const result = await getFile(fileNameFromUrl, Number(page), JSON.parse(filtersFromUrl));
+    const result = await getFile(fileNameFromUrl, Number(page));
     return (
         <main className="h-full p-4">
             Your file name: {fileNameFromUrl}
