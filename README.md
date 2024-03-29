@@ -16,7 +16,9 @@
     - [x] user kaçıncı sayfadaysa gösterilsin
 - [x] filter işlemine string exactly matches/includes'u ekle
 - [x] filter işlemlerinde magic stringler kaldırıldı
-- [ ] eğer part = 1'de 0 ürün varsa otomatik part 2'ye geç
+- [x] eğer part = 1'de 0 ürün varsa otomatik part 2'ye geç
+- [x] pagination refactor
+- [ ] code cleanup
 - [ ] /filter'da örnek 1 ürün koy
 - [ ] filter işlemine sayıları da ekle
 - [ ] error componenti ekle

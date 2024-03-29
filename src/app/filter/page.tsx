@@ -5,7 +5,7 @@ export default function FilterPage({
 }: {
     searchParams?: { [key: string]: string };
 }) {
-    const { name, keys, fileCount } = searchParams || {};
+    const { name, keys } = searchParams || {};
 
     if (!name) {
         return <div>No file name found</div>;
@@ -15,19 +15,17 @@ export default function FilterPage({
         return <div>No file keys found</div>;
     }
 
-    if (!fileCount) {
-        return <div>No file count found</div>;
-    }
-
     const fileNameFromUrl = name as string;
     const fileKeysFromUrl = JSON.parse(keys) as string[];
-    const totalFileCount = parseInt(fileCount as string);
+    // const totalPageCountFromUrl = parseInt(totalPageCount);
+    // console.log("totalPageCountFromUrl: ", totalPageCountFromUrl);
+
 
     return (
         <main className="h-full p-4">
             Your file name: {fileNameFromUrl}
             <br />
-            <KeyFilter fileCount={totalFileCount} fileName={name} keys={fileKeysFromUrl} />
+            <KeyFilter fileName={name} keys={fileKeysFromUrl} />
         </main>
     );
 }

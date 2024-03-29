@@ -1,19 +1,20 @@
 "use server";
 
 import path from "path";
-import { downloadFile, findFirstArray, splitArrayIntoChunks } from "./helpers";
+import { downloadFile, findFirstArray } from "./helpers";
 import { existsSync, mkdirSync, promises as fsPromises } from "fs";
 import { redirect } from "next/navigation";
 import { parseStringPromise } from "xml2js";
-import { STRING_CONDITION_TYPES } from "@/components/templates/StringConditions";
+import { STRING_CONDITION_TYPES, STRING_CONDITION_VALUES } from "@/components/templates/StringConditions";
 import { NUMBER_CONDITION_TYPES } from "@/components/templates/NumberConditions";
+import { itemPerPage } from "@/constants";
 
 export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;
 
     const randomName = crypto.randomUUID();
     const outputPath = path.join(process.cwd(), "src", "uploadedFiles", randomName, randomName);
-    let keys, totalFileCount = 0;
+    let keys;
 
     try {
         if (!url) {
@@ -35,19 +36,10 @@ export const fileDownload = async (formData: FormData) => {
         const resultArr = findFirstArray(result);
         keys = Object.keys(resultArr[0]);
 
-        const arrayChunks = splitArrayIntoChunks(resultArr, 1000);
-
-        for (let i = 0; i < arrayChunks.length; i++) {
-            const filePath = `${outputPath}_part${i + 1}.json`;
-            await fsPromises.writeFile(
-                filePath,
-                JSON.stringify(arrayChunks[i], null, 2),
-            );
-        }
-
-        totalFileCount = arrayChunks.length;
-
-        console.log(resultArr.length);
+        await fsPromises.writeFile(
+            outputPath + ".json",
+            JSON.stringify(resultArr, null, 2),
+        );
     } catch (error) {
         const err = error as Error;
         return {
@@ -55,7 +47,7 @@ export const fileDownload = async (formData: FormData) => {
         };
     }
 
-    redirect(`/filter?name=${randomName}&fileCount=${totalFileCount}&keys=${JSON.stringify(keys)}`);
+    redirect(`/filter?name=${randomName}&keys=${JSON.stringify(keys)}`);
 };
 
 export const deleteFiles = async () => {
@@ -94,9 +86,10 @@ type FilterObj = {
     [index: string]: FilterFields;
 }
 
-export const submitFilters = async (totalFileCount: number, fileName: string, formData: FormData) => {
+export const submitFilters = async (fileName: string, formData: FormData) => {
 
     let outputArray: FilterFields[] = [];
+    let totalPageCount = 0;
 
     try {
         const formDataArr = formData.entries();
@@ -139,6 +132,37 @@ export const submitFilters = async (totalFileCount: number, fileName: string, fo
             condition: item.condition,
         }));
 
+        const dirPath = path.join(process.cwd(), "src", "uploadedFiles", fileName);
+        const sourceFilePath = path.join(dirPath, fileName + ".json");
+        const targetFilePath = path.join(dirPath, "total_" + fileName + ".json");
+
+        console.log("dirPath: ", dirPath);
+        console.log("filePath: ", sourceFilePath);
+
+        if (!existsSync(dirPath)) {
+            throw new Error("Directory not found");
+        }
+
+        const fileContent = await fsPromises.readFile(sourceFilePath, 'utf8');
+        const jsonData = JSON.parse(fileContent);
+
+        const result = jsonData.filter((item: { [key: string]: string }) => {
+            return outputArray.every((filter) => {
+                if (filter.condition === STRING_CONDITION_VALUES.EXACTLY) {
+                    return item[filter.key] === filter.value.toString();
+                }
+
+                return item[filter.key].includes(filter.value.toString());
+            });
+        }) as unknown[];
+
+        await fsPromises.writeFile(
+            targetFilePath,
+            JSON.stringify(result, null, 2),
+        );
+
+        totalPageCount = Math.ceil(result.length / itemPerPage);
+
     } catch (error) {
         const err = error as Error;
         return {
@@ -146,7 +170,6 @@ export const submitFilters = async (totalFileCount: number, fileName: string, fo
         };
     }
 
-    console.log(outputArray);
     const encodedOutputArray = encodeURIComponent(JSON.stringify(outputArray));
-    redirect(`/file?name=${fileName}&part=1&filters=${encodedOutputArray}&fileCount=${totalFileCount}`);
+    redirect(`/file?name=${fileName}&page=1&totalPageCount=${totalPageCount}&filters=${encodedOutputArray}`);
 };
