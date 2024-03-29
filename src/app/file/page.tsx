@@ -7,7 +7,7 @@ import Pagination from "./Pagination";
 
 async function getFile(baseFileName: string, part: string, filters: FilterFields[]) {
     const fileName = `${baseFileName}_part${part}.json`;
-    console.log(filters);
+    console.log("filters xd: ", filters);
 
     try {
         const filePath = path.join(process.cwd(), "src", "uploadedFiles", baseFileName, fileName);
@@ -21,6 +21,10 @@ async function getFile(baseFileName: string, part: string, filters: FilterFields
 
         const result = jsonData.filter((item: { [key: string]: string }) => {
             return filters.every((filter) => {
+                if (filter.condition === 'exactly') {
+                    return item[filter.key] === filter.value.toString();
+                }
+
                 return item[filter.key].includes(filter.value.toString());
             });
         }) as unknown[];

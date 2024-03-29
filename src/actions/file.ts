@@ -83,7 +83,7 @@ export const deleteFiles = async () => {
 export type FilterFields = {
     key: string;
     value: string | number;
-    condition?: string;
+    condition: string;
 }
 
 type FilterObj = {
@@ -108,7 +108,7 @@ export const submitFilters = async (totalFileCount: number, fileName: string, fo
             const [index, property] = key.split("?", 2);
 
             if (!groupedData[index]) {
-                groupedData[index] = { key: "", value: "" };
+                groupedData[index] = { key: "", value: "", condition: "" };
             }
 
             if (property === "dataType") {
@@ -132,7 +132,7 @@ export const submitFilters = async (totalFileCount: number, fileName: string, fo
         outputArray = Object.values(groupedData).map((item) => ({
             key: item.key,
             value: item.value,
-            ...(item.condition && { condition: item.condition }),
+            condition: item.condition,
         }));
 
     } catch (error) {

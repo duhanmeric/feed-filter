@@ -9,6 +9,7 @@ import KeyInput from "./KeyInput";
 import NumberConditions from "./NumberConditions";
 import DataType from "./DataType";
 import SubmitButton from "./SubmitButton";
+import StringConditions from "./StringConditions";
 
 type Props = {
     keys: string[];
@@ -109,6 +110,12 @@ const KeyFilter = ({ fileCount, fileName, keys }: Props) => {
                                         updateKeyDataType={updateKeyDataType}
                                     />
                                 </div>
+                                {key.dataType === DATA.STRING && (
+                                    <StringConditions
+                                        keyLabel={key.label}
+                                        name={`${index}?condition`}
+                                    />
+                                )}
                                 {key.dataType === DATA.NUMBER && (
                                     <NumberConditions
                                         keyLabel={key.label}

@@ -14,6 +14,8 @@
     - [x] pagination butonları ekle
     - [x] pagination'da toplam kaç sayfa var
     - [x] user kaçıncı sayfadaysa gösterilsin
+- [x] filter işlemine string exactly matches/includes'u ekle
+- [ ] eğer part = 1'de 0 ürün varsa otomatik part 2'ye geç
 - [ ] /filter'da örnek 1 ürün koy
 - [ ] filter işlemine sayıları da ekle
 - [ ] error componenti ekle
