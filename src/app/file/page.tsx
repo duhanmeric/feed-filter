@@ -4,6 +4,7 @@ import path from "path";
 import { existsSync, promises as fsPromises } from "fs";
 import { FilterFields } from "@/actions/file";
 import Pagination from "./Pagination";
+import { STRING_CONDITION_VALUES } from "@/components/templates/StringConditions";
 
 async function getFile(baseFileName: string, part: string, filters: FilterFields[]) {
     const fileName = `${baseFileName}_part${part}.json`;
@@ -21,7 +22,7 @@ async function getFile(baseFileName: string, part: string, filters: FilterFields
 
         const result = jsonData.filter((item: { [key: string]: string }) => {
             return filters.every((filter) => {
-                if (filter.condition === 'exactly') {
+                if (filter.condition === STRING_CONDITION_VALUES.EXACTLY) {
                     return item[filter.key] === filter.value.toString();
                 }
 

@@ -21,7 +21,6 @@ const KeyCheck = ({ keyLabel, onCheckedChange }: Props) => {
                     onCheckedChange(e, {
                         label: keyLabel,
                         dataType: "string",
-                        value: "",
                     })
                 }
             />

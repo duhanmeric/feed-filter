@@ -13,14 +13,26 @@ type Props = {
     name: `${number}?condition`;
 };
 
-const CONDITIONS = [
+export const STRING_CONDITION_VALUES = {
+    EXACTLY: "exactly",
+    INCLUDES: "includes",
+} as const;
+
+export type STRING_CONDITION_TYPES = typeof STRING_CONDITION_VALUES[keyof typeof STRING_CONDITION_VALUES]
+
+type StringCondition = {
+    label: string;
+    value: STRING_CONDITION_TYPES;
+};
+
+const CONDITIONS: StringCondition[] = [
     {
         label: "Exactly Matches",
-        value: "exactly",
+        value: STRING_CONDITION_VALUES.EXACTLY,
     },
     {
         label: "Includes",
-        value: "includes",
+        value: STRING_CONDITION_VALUES.INCLUDES,
     }
 ];
 

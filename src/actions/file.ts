@@ -5,6 +5,8 @@ import { downloadFile, findFirstArray, splitArrayIntoChunks } from "./helpers";
 import { existsSync, mkdirSync, promises as fsPromises } from "fs";
 import { redirect } from "next/navigation";
 import { parseStringPromise } from "xml2js";
+import { STRING_CONDITION_TYPES } from "@/components/templates/StringConditions";
+import { NUMBER_CONDITION_TYPES } from "@/components/templates/NumberConditions";
 
 export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;
@@ -80,10 +82,12 @@ export const deleteFiles = async () => {
     }
 };
 
+type Condition = NUMBER_CONDITION_TYPES | STRING_CONDITION_TYPES | null;
+
 export type FilterFields = {
     key: string;
     value: string | number;
-    condition: string;
+    condition: Condition;
 }
 
 type FilterObj = {
@@ -108,7 +112,7 @@ export const submitFilters = async (totalFileCount: number, fileName: string, fo
             const [index, property] = key.split("?", 2);
 
             if (!groupedData[index]) {
-                groupedData[index] = { key: "", value: "", condition: "" };
+                groupedData[index] = { key: "", value: "", condition: null };
             }
 
             if (property === "dataType") {
@@ -122,7 +126,7 @@ export const submitFilters = async (totalFileCount: number, fileName: string, fo
                     groupedData[index].value = numberValue;
                 }
             } else if (property === "condition") {
-                groupedData[index].condition = strValue;
+                groupedData[index].condition = strValue as Condition;
             } else {
                 groupedData[index].key = property;
                 groupedData[index].value = strValue;
