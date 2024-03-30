@@ -5,7 +5,10 @@ import { downloadFile, findFirstArray } from "./helpers";
 import { existsSync, mkdirSync, promises as fsPromises } from "fs";
 import { redirect } from "next/navigation";
 import { parseStringPromise } from "xml2js";
-import { STRING_CONDITION_TYPES, STRING_CONDITION_VALUES } from "@/components/templates/StringConditions";
+import {
+    STRING_CONDITION_TYPES,
+    STRING_CONDITION_VALUES,
+} from "@/components/templates/StringConditions";
 import { NUMBER_CONDITION_TYPES } from "@/components/templates/NumberConditions";
 import { itemPerPage } from "@/constants";
 
@@ -13,7 +16,13 @@ export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;
 
     const randomName = crypto.randomUUID();
-    const outputPath = path.join(process.cwd(), "src", "uploadedFiles", randomName, randomName);
+    const outputPath = path.join(
+        process.cwd(),
+        "src",
+        "uploadedFiles",
+        randomName,
+        randomName,
+    );
     let keys;
 
     try {
@@ -80,14 +89,13 @@ export type FilterFields = {
     key: string;
     value: string | number;
     condition: Condition;
-}
+};
 
 type FilterObj = {
     [index: string]: FilterFields;
-}
+};
 
 export const submitFilters = async (fileName: string, formData: FormData) => {
-
     let outputArray: FilterFields[] = [];
     let totalPageCount = 0;
 
@@ -132,9 +140,17 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
             condition: item.condition,
         }));
 
-        const dirPath = path.join(process.cwd(), "src", "uploadedFiles", fileName);
+        const dirPath = path.join(
+            process.cwd(),
+            "src",
+            "uploadedFiles",
+            fileName,
+        );
         const sourceFilePath = path.join(dirPath, fileName + ".json");
-        const targetFilePath = path.join(dirPath, "total_" + fileName + ".json");
+        const targetFilePath = path.join(
+            dirPath,
+            "total_" + fileName + ".json",
+        );
 
         console.log("dirPath: ", dirPath);
         console.log("filePath: ", sourceFilePath);
@@ -143,7 +159,7 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
             throw new Error("Directory not found");
         }
 
-        const fileContent = await fsPromises.readFile(sourceFilePath, 'utf8');
+        const fileContent = await fsPromises.readFile(sourceFilePath, "utf8");
         const jsonData = JSON.parse(fileContent);
 
         const result = jsonData.filter((item: { [key: string]: string }) => {
@@ -161,8 +177,7 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
             JSON.stringify(result, null, 2),
         );
 
-        totalPageCount = Math.ceil(result.length / itemPerPage);
-
+        totalPageCount = Math.max(Math.ceil(result.length / itemPerPage), 1);
     } catch (error) {
         const err = error as Error;
         return {
@@ -171,5 +186,7 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
     }
 
     const encodedOutputArray = encodeURIComponent(JSON.stringify(outputArray));
-    redirect(`/file?name=${fileName}&page=1&totalPageCount=${totalPageCount}&filters=${encodedOutputArray}`);
+    redirect(
+        `/file?name=${fileName}&page=1&totalPageCount=${totalPageCount}&filters=${encodedOutputArray}`,
+    );
 };

@@ -10,24 +10,33 @@ async function getFile(uniqueFileId: string, page: number) {
     const fileName = `total_${uniqueFileId}.json`;
 
     try {
-        const filePath = path.join(process.cwd(), "src", "uploadedFiles", uniqueFileId, fileName);
+        const filePath = path.join(
+            process.cwd(),
+            "src",
+            "uploadedFiles",
+            uniqueFileId,
+            fileName,
+        );
 
         if (!existsSync(filePath)) {
             throw new Error("File not found");
         }
 
-        const fileContent = await fsPromises.readFile(filePath, 'utf8');
+        const fileContent = await fsPromises.readFile(filePath, "utf8");
         const jsonData = JSON.parse(fileContent);
 
         const startIndex = (page - 1) * itemPerPage;
-        const paginatedResults = jsonData.slice(startIndex, startIndex + itemPerPage);
+        const paginatedResults = jsonData.slice(
+            startIndex,
+            startIndex + itemPerPage,
+        );
 
         return {
             data: paginatedResults,
             totalCount: jsonData.length,
         };
     } catch (error) {
-        console.error('Error reading file:', error);
+        console.error("Error reading file:", error);
         throw error;
     }
 }
@@ -37,7 +46,6 @@ export default async function FilePage({
 }: {
     searchParams?: { [key: string]: string };
 }) {
-
     const { name, page, filters, totalPageCount } = searchParams || {};
 
     if (!name) {
@@ -71,7 +79,10 @@ export default async function FilePage({
                 <br />
                 Current page: {page}/{totalPageCount}
                 <br />
-                <Pagination currentPage={Number(page)} totalPageCount={Number(totalPageCount)} />
+                <Pagination
+                    currentPage={Number(page)}
+                    totalPageCount={Number(totalPageCount)}
+                />
                 <pre>{JSON.stringify(result.data, null, 2)}</pre>
             </div>
             {/* <FileOutput fileName={fileNameFromUrl} /> */}
