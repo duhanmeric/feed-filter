@@ -18,7 +18,7 @@
 - [x] filter işlemlerinde magic stringler kaldırıldı
 - [x] eğer part = 1'de 0 ürün varsa otomatik part 2'ye geç
 - [x] pagination refactor
-- [ ] code cleanup
+- [x] code cleanup
 - [ ] /filter'da örnek 1 ürün koy
 - [ ] filter işlemine sayıları da ekle
 - [ ] error componenti ekle

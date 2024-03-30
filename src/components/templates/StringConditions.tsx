@@ -7,34 +7,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../ui/select";
+import { STRING_CONDITIONS } from "@/constants/string";
 
 type Props = {
     keyLabel: string;
     name: `${number}?condition`;
 };
-
-export const STRING_CONDITION_VALUES = {
-    EXACTLY: "exactly",
-    INCLUDES: "includes",
-} as const;
-
-export type STRING_CONDITION_TYPES = typeof STRING_CONDITION_VALUES[keyof typeof STRING_CONDITION_VALUES]
-
-type StringCondition = {
-    label: string;
-    value: STRING_CONDITION_TYPES;
-};
-
-const CONDITIONS: StringCondition[] = [
-    {
-        label: "Exactly Matches",
-        value: STRING_CONDITION_VALUES.EXACTLY,
-    },
-    {
-        label: "Includes",
-        value: STRING_CONDITION_VALUES.INCLUDES,
-    }
-];
 
 const StringConditions = ({ keyLabel, name }: Props) => {
     return (
@@ -46,7 +24,7 @@ const StringConditions = ({ keyLabel, name }: Props) => {
                         <SelectValue placeholder="Select condition" />
                     </SelectTrigger>
                     <SelectContent id={`${keyLabel}-condition`}>
-                        {CONDITIONS.map((condition) => (
+                        {STRING_CONDITIONS.map((condition) => (
                             <SelectItem
                                 key={condition.value}
                                 value={condition.value}

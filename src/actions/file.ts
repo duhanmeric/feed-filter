@@ -5,12 +5,12 @@ import { downloadFile, findFirstArray } from "./helpers";
 import { existsSync, mkdirSync, promises as fsPromises } from "fs";
 import { redirect } from "next/navigation";
 import { parseStringPromise } from "xml2js";
+import { itemPerPage } from "@/constants";
+import { NUMBER_CONDITION_TYPES } from "@/constants/number";
 import {
     STRING_CONDITION_TYPES,
     STRING_CONDITION_VALUES,
-} from "@/components/templates/StringConditions";
-import { NUMBER_CONDITION_TYPES } from "@/components/templates/NumberConditions";
-import { itemPerPage } from "@/constants";
+} from "@/constants/string";
 
 export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;

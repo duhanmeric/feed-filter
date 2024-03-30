@@ -7,30 +7,29 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../ui/select";
-import { DATA, type DATATYPE } from "./KeyFilter";
+import { KEY, type KEY_TYPES } from "@/constants/key";
 
 type Props = {
     keyLabel: string;
     name: `${number}?dataType`;
-    updateKeyDataType: (e: DATATYPE, label: string) => void;
-    dataType: DATATYPE;
+    updateKeyDataType: (e: KEY_TYPES, label: string) => void;
+    dataType: KEY_TYPES;
 };
-
 const DataType = ({ keyLabel, name, updateKeyDataType, dataType }: Props) => {
     return (
         <div className="w-full space-y-2">
             <Label htmlFor={`${keyLabel}-select`}>Data Type</Label>
             <Select
                 name={name}
-                onValueChange={(e: DATATYPE) => updateKeyDataType(e, keyLabel)}
+                onValueChange={(e: KEY_TYPES) => updateKeyDataType(e, keyLabel)}
                 value={dataType}
             >
                 <SelectTrigger className="w-full">
                     <SelectValue placeholder="Data Type" />
                 </SelectTrigger>
                 <SelectContent id={`${keyLabel}-select`}>
-                    <SelectItem value={DATA.STRING}>String</SelectItem>
-                    <SelectItem value={DATA.NUMBER}>Number</SelectItem>
+                    <SelectItem value={KEY.STRING}>String</SelectItem>
+                    <SelectItem value={KEY.NUMBER}>Number</SelectItem>
                 </SelectContent>
             </Select>
         </div>

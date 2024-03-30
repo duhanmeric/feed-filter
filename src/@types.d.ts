@@ -1,10 +1,10 @@
 type ActionReturn<T> =
-  | {
-      success: true;
-      data: T;
-    }
-  | {
-      success: false;
-      message: string;
-      data: null;
-    };
+    | {
+          success: true;
+          data: T;
+      }
+    | {
+          success: false;
+          message: string;
+          data: null;
+      };

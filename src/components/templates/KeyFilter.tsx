@@ -10,23 +10,16 @@ import NumberConditions from "./NumberConditions";
 import DataType from "./DataType";
 import SubmitButton from "./SubmitButton";
 import StringConditions from "./StringConditions";
+import { KEY, type KEY_TYPES } from "@/constants/key";
 
 type Props = {
     keys: string[];
     fileName: string;
-    // pageCount: number;
 };
-
-export const DATA = {
-    STRING: "string",
-    NUMBER: "number",
-} as const;
-
-export type DATATYPE = (typeof DATA)[keyof typeof DATA];
 
 export type SelectedKey = {
     label: string;
-    dataType: DATATYPE;
+    dataType: KEY_TYPES;
 };
 
 const KeyFilter = ({ fileName, keys }: Props) => {
@@ -39,14 +32,14 @@ const KeyFilter = ({ fileName, keys }: Props) => {
                 isChecked
                     ? [...prevSelectedKeys, selectedKey]
                     : prevSelectedKeys.filter(
-                        (key) => key.label !== selectedKey.label,
-                    ),
+                          (key) => key.label !== selectedKey.label,
+                      ),
             );
         },
         [],
     );
 
-    const updateKeyDataType = useCallback((e: DATATYPE, label: string) => {
+    const updateKeyDataType = useCallback((e: KEY_TYPES, label: string) => {
         setSelectedKeys((prevSelectedKeys) =>
             prevSelectedKeys.map((key) =>
                 key.label === label ? { ...key, dataType: e } : key,
@@ -98,7 +91,7 @@ const KeyFilter = ({ fileName, keys }: Props) => {
                                         name={`${index}?${key.label}`}
                                         keyLabel={key.label}
                                         placeholder={
-                                            key.dataType === DATA.NUMBER
+                                            key.dataType === KEY.NUMBER
                                                 ? "E.g: 5000"
                                                 : "Enter value"
                                         }
@@ -110,13 +103,13 @@ const KeyFilter = ({ fileName, keys }: Props) => {
                                         updateKeyDataType={updateKeyDataType}
                                     />
                                 </div>
-                                {key.dataType === DATA.STRING && (
+                                {key.dataType === KEY.STRING && (
                                     <StringConditions
                                         keyLabel={key.label}
                                         name={`${index}?condition`}
                                     />
                                 )}
-                                {key.dataType === DATA.NUMBER && (
+                                {key.dataType === KEY.NUMBER && (
                                     <NumberConditions
                                         keyLabel={key.label}
                                         name={`${index}?condition`}
