@@ -1,16 +1,18 @@
 "use server";
 
 import path from "path";
-import { downloadFile, findFirstArray } from "./helpers";
+import {
+    downloadFile,
+    filterNumber,
+    filterString,
+    findFirstArray,
+} from "./helpers";
 import { existsSync, mkdirSync, promises as fsPromises } from "fs";
 import { redirect } from "next/navigation";
 import { parseStringPromise } from "xml2js";
 import { itemPerPage } from "@/constants";
 import { NUMBER_CONDITION_TYPES } from "@/constants/number";
-import {
-    STRING_CONDITION_TYPES,
-    STRING_CONDITION_VALUES,
-} from "@/constants/string";
+import { STRING_CONDITION_TYPES } from "@/constants/string";
 
 export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;
@@ -95,6 +97,10 @@ type FilterObj = {
     [index: string]: FilterFields;
 };
 
+export type FeedField = {
+    [key: string]: string;
+};
+
 export const submitFilters = async (fileName: string, formData: FormData) => {
     let outputArray: FilterFields[] = [];
     let totalPageCount = 0;
@@ -162,13 +168,22 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
         const fileContent = await fsPromises.readFile(sourceFilePath, "utf8");
         const jsonData = JSON.parse(fileContent);
 
-        const result = jsonData.filter((item: { [key: string]: string }) => {
+        const result = jsonData.filter((item: FeedField) => {
             return outputArray.every((filter) => {
-                if (filter.condition === STRING_CONDITION_VALUES.EXACTLY) {
-                    return item[filter.key] === filter.value.toString();
+                if (!item[filter.key]) {
+                    return false;
                 }
 
-                return item[filter.key].includes(filter.value.toString());
+                if (typeof filter.value === "string") {
+                    return filterString(filter, item);
+                }
+
+                const extractedNumber = item[filter.key].match(/[0-9.,]+/g);
+                if (!extractedNumber) {
+                    return false;
+                }
+
+                return filterNumber(filter, Number(extractedNumber[0]));
             });
         }) as unknown[];
 
@@ -186,6 +201,7 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
     }
 
     const encodedOutputArray = encodeURIComponent(JSON.stringify(outputArray));
+
     redirect(
         `/file?name=${fileName}&page=1&totalPageCount=${totalPageCount}&filters=${encodedOutputArray}`,
     );

@@ -19,8 +19,8 @@
 - [x] eğer part = 1'de 0 ürün varsa otomatik part 2'ye geç
 - [x] pagination refactor
 - [x] code cleanup
-- [ ] /filter'da örnek 1 ürün koy
-- [ ] filter işlemine sayıları da ekle
+- [x] filter işlemine sayıları da ekle
+- [ ] atomic design'a geç
 - [ ] error componenti ekle
 - [ ] timeout süresi ekle
 - [ ] url limiti ekle

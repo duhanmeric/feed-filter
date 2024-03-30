@@ -3,8 +3,8 @@ export const NUMBER_CONDITION_VALUES = {
     GREATER_THAN_OR_EQUAL: ">=",
     LESS_THAN: "<",
     LESS_THAN_OR_EQUAL: "<=",
-    EQUAL_TO: "===",
-    NOT_EQUAL_TO: "!==",
+    EQUAL: "===",
+    NOT_EQUAL: "!==",
 } as const;
 
 export type NUMBER_CONDITION_TYPES =

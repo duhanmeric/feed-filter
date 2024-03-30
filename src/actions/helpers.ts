@@ -1,8 +1,8 @@
+import { STRING_CONDITION_VALUES } from "@/constants/string";
 import axios from "axios";
-import {
-    createWriteStream,
-    promises as fsPromises,
-} from "fs";
+import { createWriteStream, promises as fsPromises } from "fs";
+import { FeedField, FilterFields } from "./file";
+import { NUMBER_CONDITION_VALUES } from "@/constants/number";
 
 export const getExtensionFromContentType = (contentType: string): string => {
     if (contentType.includes("xml")) {
@@ -62,3 +62,32 @@ export function findFirstArray(data: any): any {
     }
     return null;
 }
+
+export const filterString = (filter: FilterFields, item: FeedField) => {
+    if (filter.condition === STRING_CONDITION_VALUES.EXACTLY) {
+        return item[filter.key] === filter.value.toString();
+    }
+
+    return item[filter.key].includes(filter.value.toString());
+};
+
+export const filterNumber = (filter: FilterFields, extractedNumber: number) => {
+    const value = filter.value as number;
+
+    switch (filter.condition) {
+        case NUMBER_CONDITION_VALUES.GREATER_THAN:
+            return extractedNumber > value;
+        case NUMBER_CONDITION_VALUES.LESS_THAN:
+            return extractedNumber < value;
+        case NUMBER_CONDITION_VALUES.EQUAL:
+            return extractedNumber === value;
+        case NUMBER_CONDITION_VALUES.NOT_EQUAL:
+            return extractedNumber !== value;
+        case NUMBER_CONDITION_VALUES.GREATER_THAN_OR_EQUAL:
+            return extractedNumber >= value;
+        case NUMBER_CONDITION_VALUES.LESS_THAN_OR_EQUAL:
+            return extractedNumber <= value;
+        default:
+            return false;
+    }
+};
