@@ -20,6 +20,7 @@
 - [x] pagination refactor
 - [x] code cleanup
 - [x] filter işlemine sayıları da ekle
+- [x] filter result render
 - [ ] atomic design'a geç
 - [ ] error componenti ekle
 - [ ] timeout süresi ekle

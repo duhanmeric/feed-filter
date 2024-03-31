@@ -1,8 +1,6 @@
-// import FileOutput from "@/components/templates/FileOutput";
-
 import path from "path";
 import { existsSync, promises as fsPromises } from "fs";
-import { FilterFields } from "@/actions/file";
+import { FeedField } from "@/actions/file";
 import Pagination from "./Pagination";
 import { itemPerPage } from "@/constants";
 
@@ -23,7 +21,7 @@ async function getFile(uniqueFileId: string, page: number) {
         }
 
         const fileContent = await fsPromises.readFile(filePath, "utf8");
-        const jsonData = JSON.parse(fileContent);
+        const jsonData = JSON.parse(fileContent) as FeedField[];
 
         const startIndex = (page - 1) * itemPerPage;
         const paginatedResults = jsonData.slice(
@@ -70,22 +68,35 @@ export default async function FilePage({
     const result = await getFile(fileNameFromUrl, Number(page));
     return (
         <main className="h-full p-4">
+            <h1 className="text-2xl font-bold">Your Filter Results</h1>
             Your file name: {fileNameFromUrl}
             <br />
             Your filters: {filtersFromUrl}
             <br />
             <div>
-                <span>{result.totalCount}</span> items found
-                <br />
-                Current page: {page}/{totalPageCount}
-                <br />
-                <Pagination
-                    currentPage={Number(page)}
-                    totalPageCount={Number(totalPageCount)}
-                />
-                <pre>{JSON.stringify(result.data, null, 2)}</pre>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <span>{result.totalCount}</span> items found
+                    </div>
+                    <div>
+                        Current page: {page}/{totalPageCount}
+                    </div>
+                    <Pagination
+                        currentPage={Number(page)}
+                        totalPageCount={Number(totalPageCount)}
+                    />
+                </div>
+                {result.data.map((item, index) => (
+                    <div
+                        key={index}
+                        className="my-4 rounded-sm border border-black p-4"
+                    >
+                        <pre className="whitespace-break-spaces text-sm">
+                            {JSON.stringify(item, null, 2)}
+                        </pre>
+                    </div>
+                ))}
             </div>
-            {/* <FileOutput fileName={fileNameFromUrl} /> */}
         </main>
     );
 }
