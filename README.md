@@ -21,6 +21,9 @@
 - [x] code cleanup
 - [x] filter işlemine sayıları da ekle
 - [x] filter result render
+- [ ] shadcdn pagination ekle
+- [ ] header ekle
+- [ ] footer ekle
 - [ ] atomic design'a geç
 - [ ] error componenti ekle
 - [ ] timeout süresi ekle
