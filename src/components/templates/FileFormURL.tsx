@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
-import { deleteFiles, fileDownload } from "@/actions/file";
+import { fileDownload } from "@/actions/file";
 import SubmitButton from "./SubmitButton";
 
 const FileFormURL = () => {
@@ -30,26 +29,20 @@ const FileFormURL = () => {
 
     return (
         <div className="flex h-full flex-col items-center justify-center">
-            <span>
-                https://www.baqa.com.tr/XMLExport/5E8A9B3E8A984DED8CE5D667CB56B5B9
-            </span>
-
             <div className="flex h-full w-full max-w-md  items-center justify-center">
-                <form action={clientAction} className="w-full space-y-4">
+                <form action={clientAction} className="mb-28 w-full space-y-4">
                     <div>
                         <Label htmlFor="fileUrl">Feed URL</Label>
                         <Input
                             placeholder="Feed URL..."
                             id="fileUrl"
                             name="fileUrl"
+                            defaultValue="https://www.baqa.com.tr/XMLExport/5E8A9B3E8A984DED8CE5D667CB56B5B9"
                         />
                     </div>
                     <SubmitButton title="Confirm" />
                 </form>
             </div>
-            <form action={deleteFiles}>
-                <Button variant="destructive">Delete Files</Button>
-            </form>
         </div>
     );
 };

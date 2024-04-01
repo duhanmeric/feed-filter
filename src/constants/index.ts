@@ -1,1 +1,1 @@
-export const itemPerPage = 20;
+export const itemPerPage = 10;

@@ -1,4 +1,5 @@
 import KeyFilter from "@/components/templates/KeyFilter";
+import { Badge } from "@/components/ui/badge";
 
 export default function FilterPage({
     searchParams,
@@ -16,15 +17,17 @@ export default function FilterPage({
     }
 
     const fileNameFromUrl = name as string;
-    const fileKeysFromUrl = JSON.parse(keys) as string[];
-    // const totalPageCountFromUrl = parseInt(totalPageCount);
-    // console.log("totalPageCountFromUrl: ", totalPageCountFromUrl);
+    const fileKeysFromUrl = JSON.parse(decodeURIComponent(keys));
 
     return (
-        <main className="h-full p-4">
-            Your file name: {fileNameFromUrl}
-            <br />
+        <section>
+            <h1 className="text-2xl font-bold">Filter Keys</h1>
+            <div className="mb-2">
+                <span>Your file name: </span>
+                <Badge variant="secondary">{fileNameFromUrl}</Badge>
+            </div>
+
             <KeyFilter fileName={name} keys={fileKeysFromUrl} />
-        </main>
+        </section>
     );
 }

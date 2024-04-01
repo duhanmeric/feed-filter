@@ -58,7 +58,8 @@ export const fileDownload = async (formData: FormData) => {
         };
     }
 
-    redirect(`/filter?name=${randomName}&keys=${JSON.stringify(keys)}`);
+    const encodedKeys = encodeURIComponent(JSON.stringify(keys));
+    redirect(`/filter?name=${randomName}&keys=${encodedKeys}`);
 };
 
 export const deleteFiles = async () => {
@@ -83,6 +84,8 @@ export const deleteFiles = async () => {
     } catch (error) {
         console.error(error);
     }
+
+    redirect("/");
 };
 
 type Condition = NUMBER_CONDITION_TYPES | STRING_CONDITION_TYPES | null;

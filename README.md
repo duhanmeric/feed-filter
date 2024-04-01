@@ -22,7 +22,7 @@
 - [x] filter işlemine sayıları da ekle
 - [x] filter result render
 - [x] shadcdn pagination ekle
-- [ ] header ekle
+- [x] header ekle
 - [ ] footer ekle
 - [ ] atomic design'a geç
 - [ ] error componenti ekle

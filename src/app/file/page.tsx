@@ -3,6 +3,7 @@ import { existsSync, promises as fsPromises } from "fs";
 import { FeedField } from "@/actions/file";
 import Pagination from "./Pagination";
 import { itemPerPage } from "@/constants";
+import { Badge } from "@/components/ui/badge";
 
 async function getFile(uniqueFileId: string, page: number) {
     const fileName = `total_${uniqueFileId}.json`;
@@ -67,10 +68,12 @@ export default async function FilePage({
 
     const result = await getFile(fileNameFromUrl, Number(page));
     return (
-        <main className="h-full p-4">
+        <main>
             <h1 className="text-2xl font-bold">Your Filter Results</h1>
-            Your file name: {fileNameFromUrl}
-            <br />
+            <div>
+                <span>Your file name: </span>
+                <Badge variant="secondary">{fileNameFromUrl}</Badge>
+            </div>
             Your filters: {filtersFromUrl}
             <br />
             <div>
