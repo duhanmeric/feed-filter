@@ -21,7 +21,7 @@
 - [x] code cleanup
 - [x] filter işlemine sayıları da ekle
 - [x] filter result render
-- [ ] shadcdn pagination ekle
+- [x] shadcdn pagination ekle
 - [ ] header ekle
 - [ ] footer ekle
 - [ ] atomic design'a geç

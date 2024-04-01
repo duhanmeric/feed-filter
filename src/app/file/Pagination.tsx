@@ -1,8 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import {
+    Pagination as ShadPagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationPrevious,
+    PaginationNext,
+    PaginationEllipsis,
+} from "@/components/ui/pagination";
+import { usePathname, useSearchParams } from "next/navigation";
 
 type Props = {
     currentPage: number;
@@ -10,57 +17,55 @@ type Props = {
 };
 
 const Pagination = ({ currentPage, totalPageCount }: Props) => {
-    const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const handlePrev = () => {
-        if (currentPage === 1) {
-            return;
-        }
-
-        const params = new URLSearchParams(searchParams.toString());
-        params.set("page", `${currentPage - 1}`);
-
-        router.push(`${pathname}?${params.toString()}`);
+    const handleHref = (page: number) => {
+        const params = new URLSearchParams(searchParams);
+        params.set("page", `${page}`);
+        return `${pathname}?${params}`;
     };
 
-    const handleNext = () => {
-        if (currentPage === totalPageCount) {
-            return;
-        }
-
-        const params = new URLSearchParams(searchParams.toString());
-        params.set("page", `${currentPage + 1}`);
-
-        router.push(`${pathname}?${params.toString()}`);
-    };
-
-    useEffect(() => {
-        if (currentPage > totalPageCount) {
-            const params = new URLSearchParams(searchParams.toString());
-            params.set("page", `${totalPageCount}`);
-
-            router.push(`${pathname}?${params.toString()}`);
-        } else if (currentPage < 1) {
-            const params = new URLSearchParams(searchParams.toString());
-            params.set("page", "1");
-
-            router.push(`${pathname}?${params.toString()}`);
-        }
-    }, [currentPage, pathname, router, searchParams, totalPageCount]);
 
     return (
-        <div className="space-x-4">
-            <Button disabled={currentPage === 1} onClick={handlePrev}>
-                Prev
-            </Button>
-            <Button
-                disabled={currentPage === totalPageCount}
-                onClick={handleNext}
-            >
-                Next
-            </Button>
+        <div>
+            <ShadPagination>
+                <PaginationContent>
+                    <PaginationItem>
+                        <PaginationPrevious href={handleHref(Math.max(1, currentPage - 1))} />
+                    </PaginationItem>
+
+
+                    {Array.from({ length: Math.min(3, totalPageCount) }).map((_, idx) => {
+                        let page = currentPage - 1 + idx;
+
+                        if (currentPage <= 2) {
+                            page = idx + 1;
+                        }
+                        else if (currentPage >= totalPageCount - 1) {
+                            page = totalPageCount - 2 + idx;
+                        }
+
+                        return <PaginationItem key={page}>
+                            <PaginationLink href={handleHref(page)} isActive={page === currentPage}>
+                                {page}
+                            </PaginationLink>
+                        </PaginationItem>
+                    })}
+
+
+                    {currentPage < totalPageCount - 1 && totalPageCount > 3 && <PaginationItem><PaginationEllipsis /></PaginationItem>}
+                    {currentPage < totalPageCount - 1 && totalPageCount > 3 && (
+                        <PaginationItem>
+                            <PaginationLink href={handleHref(totalPageCount)}>{totalPageCount}</PaginationLink>
+                        </PaginationItem>
+                    )}
+
+                    <PaginationItem>
+                        <PaginationNext href={handleHref(Math.min(totalPageCount, currentPage + 1))} />
+                    </PaginationItem>
+                </PaginationContent>
+            </ShadPagination>
         </div>
     );
 };

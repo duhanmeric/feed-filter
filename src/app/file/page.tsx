@@ -78,9 +78,6 @@ export default async function FilePage({
                     <div>
                         <span>{result.totalCount}</span> items found
                     </div>
-                    <div>
-                        Current page: {page}/{totalPageCount}
-                    </div>
                     <Pagination
                         currentPage={Number(page)}
                         totalPageCount={Number(totalPageCount)}
