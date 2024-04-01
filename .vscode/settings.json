@@ -1,5 +1,6 @@
 {
   "window.zoomLevel": 1.2,
   "typescript.tsdk": "node_modules\\typescript\\lib",
-  "editor.tabSize": 4
+  "editor.tabSize": 4,
+  "editor.formatOnSave": true,
 }

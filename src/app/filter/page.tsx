@@ -20,7 +20,6 @@ export default function FilterPage({
     // const totalPageCountFromUrl = parseInt(totalPageCount);
     // console.log("totalPageCountFromUrl: ", totalPageCountFromUrl);
 
-
     return (
         <main className="h-full p-4">
             Your file name: {fileNameFromUrl}
