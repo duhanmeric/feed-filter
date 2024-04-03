@@ -1,6 +1,6 @@
 import path from "path";
 import { existsSync, promises as fsPromises } from "fs";
-import { FeedField } from "@/actions/file";
+import { FeedField, FilterFields } from "@/actions/file";
 import Pagination from "./Pagination";
 import { itemPerPage } from "@/constants";
 import { Badge } from "@/components/ui/badge";
@@ -68,13 +68,20 @@ export default async function FilePage({
 
     const result = await getFile(fileNameFromUrl, Number(page));
     return (
-        <main>
+        <main className="pb-4">
             <h1 className="text-2xl font-bold">Your Filter Results</h1>
             <div>
                 <span>Your file name: </span>
                 <Badge variant="secondary">{fileNameFromUrl}</Badge>
             </div>
-            Your filters: {filtersFromUrl}
+            <div className="my-2">
+                <span className="mr-2">Your filters:</span>
+                {JSON.parse(filtersFromUrl).map((filter: FilterFields) => (
+                    <Badge key={filter.key} className="mr-2">
+                        {filter.key} {filter.condition} {filter.value}
+                    </Badge>
+                ))}
+            </div>
             <br />
             <div>
                 <div className="flex items-center justify-between">
@@ -96,6 +103,12 @@ export default async function FilePage({
                         </pre>
                     </div>
                 ))}
+                <div className="flex justify-end">
+                    <Pagination
+                        currentPage={Number(page)}
+                        totalPageCount={Number(totalPageCount)}
+                    />
+                </div>
             </div>
         </main>
     );

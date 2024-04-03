@@ -18,9 +18,17 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${inter.className} flex flex-col`}>
+            <head>
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1.0"
+                ></meta>
+            </head>
+            <body className={`${inter.className} flex h-full flex-col`}>
                 <Header />
-                <main className="h-full p-4">{children}</main>
+                <main className="container h-full max-w-screen-2xl py-4">
+                    {children}
+                </main>
                 <Toaster />
             </body>
         </html>
