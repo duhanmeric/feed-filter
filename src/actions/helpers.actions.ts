@@ -1,8 +1,14 @@
 import { STRING_CONDITION_VALUES } from "@/constants/string";
 import axios from "axios";
-import { createWriteStream, promises as fsPromises } from "fs";
-import { FeedField, FilterFields } from "./file";
+import {
+    createWriteStream,
+    existsSync,
+    promises as fsPromises,
+    mkdirSync,
+} from "fs";
+import { FeedField, FilterFields } from "./file.actions";
 import { NUMBER_CONDITION_VALUES } from "@/constants/number";
+import path from "path";
 
 export const getExtensionFromContentType = (contentType: string): string => {
     if (contentType.includes("xml")) {
@@ -18,7 +24,16 @@ export const downloadFile = async (
 ): Promise<string> => {
     return new Promise(async (resolve, reject) => {
         try {
-            const response = await axios.get(url, { responseType: "stream" });
+            const response = await axios.get(url, {
+                responseType: "stream",
+                timeout: 30000,
+                timeoutErrorMessage: "Timeout",
+            });
+
+            const directory = path.dirname(outputPath);
+            if (!existsSync(directory)) {
+                mkdirSync(directory, { recursive: true });
+            }
             const extension = getExtensionFromContentType(
                 response.headers["content-type"],
             );

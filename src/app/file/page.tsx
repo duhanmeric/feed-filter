@@ -1,7 +1,7 @@
 import path from "path";
 import { existsSync, promises as fsPromises } from "fs";
-import { FeedField, FilterFields } from "@/actions/file";
-import Pagination from "./Pagination";
+import { FeedField, FilterFields } from "@/actions/file.actions";
+import Pagination from "@/components/templates/Pagination";
 import { itemPerPage } from "@/constants";
 import { Badge } from "@/components/ui/badge";
 

@@ -25,7 +25,7 @@
 - [x] header ekle
 - [x] footer ekle
 - [ ] error componenti ekle
-- [ ] timeout süresi ekle
+- [x] timeout süresi ekle
 - [ ] url limiti ekle
 - [ ] dosyaları sil
 

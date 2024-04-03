@@ -6,8 +6,8 @@ import {
     filterNumber,
     filterString,
     findFirstArray,
-} from "./helpers";
-import { existsSync, mkdirSync, promises as fsPromises } from "fs";
+} from "./helpers.actions";
+import { existsSync, promises as fsPromises } from "fs";
 import { redirect } from "next/navigation";
 import { parseStringPromise } from "xml2js";
 import { itemPerPage } from "@/constants";
@@ -29,15 +29,11 @@ export const fileDownload = async (formData: FormData) => {
 
     try {
         if (!url) {
-            throw new Error("URL and file name are required");
-        }
-
-        const directory = path.dirname(outputPath);
-        if (!existsSync(directory)) {
-            mkdirSync(directory, { recursive: true });
+            throw new Error("URL is required");
         }
 
         const fileContent = await downloadFile(url, outputPath);
+
         const result = await parseStringPromise(fileContent, {
             explicitArray: false,
             mergeAttrs: true,

@@ -4,7 +4,7 @@ import React from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
-import { fileDownload } from "@/actions/file";
+import { fileDownload } from "@/actions/file.actions";
 import SubmitButton from "./SubmitButton";
 
 const FileFormURL = () => {

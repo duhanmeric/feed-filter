@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
-import { deleteFiles } from "@/actions/file";
+import { deleteFiles } from "@/actions/file.actions";
 
 const Header = () => {
     return (
