@@ -67,13 +67,14 @@
 }
 
 @layer base {
-    * {
-        @apply border-border;
-    }
     html {
-        @apply h-full;
+        @apply h-auto min-h-screen;
     }
     body {
-        @apply h-full bg-background text-foreground;
+        @apply h-auto min-h-screen bg-background text-foreground;
+    }
+
+    main {
+        @apply flex-1;
     }
 }

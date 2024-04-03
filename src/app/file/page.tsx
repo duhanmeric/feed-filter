@@ -68,7 +68,7 @@ export default async function FilePage({
 
     const result = await getFile(fileNameFromUrl, Number(page));
     return (
-        <main className="pb-4">
+        <main className="container h-full max-w-screen-2xl justify-center py-4">
             <h1 className="text-2xl font-bold">Your Filter Results</h1>
             <div>
                 <span>Your file name: </span>
@@ -84,7 +84,7 @@ export default async function FilePage({
             </div>
             <br />
             <div>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col items-center justify-between gap-2 md:flex-row">
                     <div>
                         <span>{result.totalCount}</span> items found
                     </div>
@@ -98,12 +98,12 @@ export default async function FilePage({
                         key={index}
                         className="my-4 rounded-sm border border-black p-4"
                     >
-                        <pre className="whitespace-break-spaces text-sm">
+                        <pre className="whitespace-break-spaces break-words text-sm">
                             {JSON.stringify(item, null, 2)}
                         </pre>
                     </div>
                 ))}
-                <div className="flex justify-end">
+                <div className="flex justify-center md:justify-end">
                     <Pagination
                         currentPage={Number(page)}
                         totalPageCount={Number(totalPageCount)}

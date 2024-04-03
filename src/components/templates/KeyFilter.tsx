@@ -68,7 +68,7 @@ const KeyFilter = ({ fileName, keys }: Props) => {
     return (
         <div>
             <h1 className="mb-2">Select your filter</h1>
-            <div className="grid grid-cols-3 space-y-2">
+            <div className="grid grid-cols-2 space-y-2 md:grid-cols-3">
                 {keys.map((key) => (
                     <KeyCheck
                         key={key}

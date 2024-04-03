@@ -24,7 +24,9 @@ const KeyCheck = ({ keyLabel, onCheckedChange }: Props) => {
                     })
                 }
             />
-            <Label htmlFor={keyLabel}>{keyLabel}</Label>
+            <Label htmlFor={keyLabel} className="break-all leading-tight">
+                {keyLabel}
+            </Label>
         </div>
     );
 };

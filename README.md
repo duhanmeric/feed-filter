@@ -23,8 +23,7 @@
 - [x] filter result render
 - [x] shadcdn pagination ekle
 - [x] header ekle
-- [ ] footer ekle
-- [ ] atomic design'a geç
+- [x] footer ekle
 - [ ] error componenti ekle
 - [ ] timeout süresi ekle
 - [ ] url limiti ekle

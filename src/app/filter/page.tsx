@@ -20,7 +20,7 @@ export default function FilterPage({
     const fileKeysFromUrl = JSON.parse(decodeURIComponent(keys));
 
     return (
-        <section>
+        <main className="container h-full max-w-screen-2xl justify-center py-4">
             <h1 className="text-2xl font-bold">Filter Keys</h1>
             <div className="mb-2">
                 <span>Your file name: </span>
@@ -28,6 +28,6 @@ export default function FilterPage({
             </div>
 
             <KeyFilter fileName={name} keys={fileKeysFromUrl} />
-        </section>
+        </main>
     );
 }

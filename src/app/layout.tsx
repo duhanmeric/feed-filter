@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/templates/Header";
+import Footer from "@/components/templates/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,17 +19,11 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <head>
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1.0"
-                ></meta>
-            </head>
             <body className={`${inter.className} flex h-full flex-col`}>
                 <Header />
-                <main className="container h-full max-w-screen-2xl py-4">
-                    {children}
-                </main>
+                {children}
+                <Footer />
+
                 <Toaster />
             </body>
         </html>
