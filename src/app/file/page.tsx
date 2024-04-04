@@ -12,7 +12,7 @@ async function getFile(uniqueFileId: string, page: number) {
         const filePath = path.join(
             process.cwd(),
             "src",
-            "uploadedFiles",
+            fileOutputDir",
             uniqueFileId,
             fileName,
         );

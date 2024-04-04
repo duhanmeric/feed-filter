@@ -27,7 +27,7 @@
 - [ ] error componenti ekle
 - [x] timeout süresi ekle
 - [ ] url limiti ekle
-- [ ] dosyaları sil
+- [x] dosyaları sil
 
 
 ---

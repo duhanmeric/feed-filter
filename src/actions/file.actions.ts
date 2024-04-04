@@ -10,7 +10,7 @@ import {
 import { existsSync, promises as fsPromises } from "fs";
 import { redirect } from "next/navigation";
 import { parseStringPromise } from "xml2js";
-import { itemPerPage } from "@/constants";
+import { fileDestroyDuration, fileOutputDir, itemPerPage } from "@/constants";
 import { NUMBER_CONDITION_TYPES } from "@/constants/number";
 import { STRING_CONDITION_TYPES } from "@/constants/string";
 
@@ -18,13 +18,9 @@ export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;
 
     const randomName = crypto.randomUUID();
-    const outputPath = path.join(
-        process.cwd(),
-        "src",
-        "uploadedFiles",
-        randomName,
-        randomName,
-    );
+    const directoryPath = path.join(process.cwd(), "src", fileOutputDir, randomName);
+    const outputPath = path.join(directoryPath, randomName);
+
     let keys;
 
     try {
@@ -47,6 +43,9 @@ export const fileDownload = async (formData: FormData) => {
             outputPath + ".json",
             JSON.stringify(resultArr, null, 2),
         );
+
+        setTimeout(() => deleteDirectory(randomName), fileDestroyDuration);
+
     } catch (error) {
         const err = error as Error;
         return {
@@ -58,8 +57,8 @@ export const fileDownload = async (formData: FormData) => {
     redirect(`/filter?name=${randomName}&keys=${encodedKeys}`);
 };
 
-export const deleteFiles = async () => {
-    const directory = path.join(process.cwd(), "src", "uploadedFiles");
+export const clearFiles = async () => {
+    const directory = path.join(process.cwd(), "src", fileOutputDir);
 
     const deleteRecursively = async (dir: string) => {
         const files = await fsPromises.readdir(dir, { withFileTypes: true });
@@ -84,6 +83,36 @@ export const deleteFiles = async () => {
     redirect("/");
 };
 
+export const deleteDirectory = async (directoryId: string) => {
+    const dir = path.join(process.cwd(), "src", fileOutputDir, directoryId);
+
+    try {
+        await fsPromises.access(dir);
+
+        const files = await fsPromises.readdir(dir, { withFileTypes: true });
+
+        for (const file of files) {
+            const filePath = path.join(dir, file.name);
+            if (file.isDirectory()) {
+                await deleteDirectory(filePath);
+            } else {
+                await fsPromises.unlink(filePath);
+            }
+        }
+
+        await fsPromises.rmdir(dir);
+    } catch (error) {
+        if (error instanceof Error && 'code' in error) {
+            if (error.code === 'ENOENT') {
+                console.log(`Directory does not exist: ${dir}`);
+            } else {
+                console.error(`Error deleting directory ${dir}: ${error.message}`);
+            }
+        } else {
+            console.error(`An unexpected error occurred: ${error}`);
+        }
+    }
+};
 type Condition = NUMBER_CONDITION_TYPES | STRING_CONDITION_TYPES | null;
 
 export type FilterFields = {
@@ -148,7 +177,7 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
         const dirPath = path.join(
             process.cwd(),
             "src",
-            "uploadedFiles",
+            fileOutputDir,
             fileName,
         );
         const sourceFilePath = path.join(dirPath, fileName + ".json");
