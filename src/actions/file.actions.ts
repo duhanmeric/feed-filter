@@ -18,7 +18,12 @@ export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;
 
     const randomName = crypto.randomUUID();
-    const directoryPath = path.join(process.cwd(), "src", fileOutputDir, randomName);
+    const directoryPath = path.join(
+        process.cwd(),
+        "src",
+        fileOutputDir,
+        randomName,
+    );
     const outputPath = path.join(directoryPath, randomName);
 
     let keys;
@@ -45,7 +50,6 @@ export const fileDownload = async (formData: FormData) => {
         );
 
         setTimeout(() => deleteDirectory(randomName), fileDestroyDuration);
-
     } catch (error) {
         const err = error as Error;
         return {
@@ -102,17 +106,22 @@ export const deleteDirectory = async (directoryId: string) => {
 
         await fsPromises.rmdir(dir);
     } catch (error) {
-        if (error instanceof Error && 'code' in error) {
-            if (error.code === 'ENOENT') {
+        if (error instanceof Error && "code" in error) {
+            if (error.code === "ENOENT") {
                 console.log(`Directory does not exist: ${dir}`);
             } else {
-                console.error(`Error deleting directory ${dir}: ${error.message}`);
+                console.error(
+                    `Error deleting directory ${dir}: ${error.message}`,
+                );
             }
         } else {
             console.error(`An unexpected error occurred: ${error}`);
         }
     }
+
+    redirect("/");
 };
+
 type Condition = NUMBER_CONDITION_TYPES | STRING_CONDITION_TYPES | null;
 
 export type FilterFields = {

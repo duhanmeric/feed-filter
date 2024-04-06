@@ -7,16 +7,20 @@ import { useSearchParams } from "next/navigation";
 const DeleteDirButton = () => {
     const searchParams = useSearchParams();
 
+    const fileName = searchParams.get("name");
+
+    if (!fileName) {
+        return null;
+    }
+
     const clientAction = async () => {
         try {
-            const fileName = searchParams.get('name');
-            if (fileName) {
-                await deleteDirectory(fileName);
-            }
+            await deleteDirectory(fileName);
         } catch (error) {
             console.error(error);
         }
-    }
+    };
+
     return (
         <form action={clientAction}>
             <Button size="sm" variant="destructive">
@@ -24,6 +28,6 @@ const DeleteDirButton = () => {
             </Button>
         </form>
     );
-}
+};
 
 export default DeleteDirButton;
