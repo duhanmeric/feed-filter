@@ -24,7 +24,7 @@
 - [x] shadcdn pagination ekle
 - [x] header ekle
 - [x] footer ekle
-- [ ] error componenti ekle
+- [x] error componenti ekle
 - [x] timeout süresi ekle
 - [ ] url limiti ekle
 - [x] dosyaları sil
