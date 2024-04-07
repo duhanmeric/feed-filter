@@ -3,30 +3,23 @@
 import path from "path";
 import {
     downloadFile,
-    filterNumber,
-    filterString,
-    findFirstArray,
+    filterData,
+    getFilePaths,
+    parseAndExtract,
+    parseFormData,
 } from "./helpers.actions";
-import { existsSync, promises as fsPromises } from "fs";
+import { promises as fsPromises } from "fs";
 import { redirect } from "next/navigation";
-import { parseStringPromise } from "xml2js";
 import { fileDestroyDuration, fileOutputDir, itemPerPage } from "@/constants";
-import { NUMBER_CONDITION_TYPES } from "@/constants/number";
-import { STRING_CONDITION_TYPES } from "@/constants/string";
 
 export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;
 
     const randomName = crypto.randomUUID();
-    const directoryPath = path.join(
-        process.cwd(),
-        "src",
-        fileOutputDir,
-        randomName,
-    );
+    const directoryPath = path.join(process.cwd(), "src", fileOutputDir, randomName);
     const outputPath = path.join(directoryPath, randomName);
 
-    let keys;
+    let keys: string[] = [];
 
     try {
         if (!url) {
@@ -34,20 +27,11 @@ export const fileDownload = async (formData: FormData) => {
         }
 
         const fileContent = await downloadFile(url, outputPath);
+        const resultArr = await parseAndExtract(fileContent);
 
-        const result = await parseStringPromise(fileContent, {
-            explicitArray: false,
-            mergeAttrs: true,
-            explicitRoot: false,
-            ignoreAttrs: true,
-        });
-        const resultArr = findFirstArray(result);
-        keys = Object.keys(resultArr[0]);
+        keys = [...Object.keys(resultArr[0])];
 
-        await fsPromises.writeFile(
-            outputPath + ".json",
-            JSON.stringify(resultArr, null, 2),
-        );
+        await fsPromises.writeFile(outputPath + ".json", JSON.stringify(resultArr, null, 2));
 
         setTimeout(() => deleteDirectory(randomName), fileDestroyDuration);
     } catch (error) {
@@ -110,9 +94,7 @@ export const deleteDirectory = async (directoryId: string) => {
             if (error.code === "ENOENT") {
                 console.log(`Directory does not exist: ${dir}`);
             } else {
-                console.error(
-                    `Error deleting directory ${dir}: ${error.message}`,
-                );
+                console.error(`Error deleting directory ${dir}: ${error.message}`);
             }
         } else {
             console.error(`An unexpected error occurred: ${error}`);
@@ -122,122 +104,25 @@ export const deleteDirectory = async (directoryId: string) => {
     redirect("/");
 };
 
-type Condition = NUMBER_CONDITION_TYPES | STRING_CONDITION_TYPES | null;
-
-export type FilterFields = {
-    key: string;
-    value: string | number;
-    condition: Condition;
-};
-
-type FilterObj = {
-    [index: string]: FilterFields;
-};
-
-export type FeedField = {
-    [key: string]: string;
-};
-
 export const submitFilters = async (fileName: string, formData: FormData) => {
-    let outputArray: FilterFields[] = [];
     let totalPageCount = 0;
+    let encodedOutputArray = "";
 
     try {
-        const formDataArr = formData.entries();
-        const groupedData: FilterObj = {};
+        const filters = parseFormData(formData);
+        encodedOutputArray = encodeURIComponent(JSON.stringify(filters));
 
-        for (let [key, value] of formDataArr) {
-            const strValue = value as string;
+        const { sourceFilePath, targetFilePath } = getFilePaths(fileName);
 
-            if (!strValue.trim()) {
-                throw new Error(`Form data for '${key}' cannot be empty.`);
-            }
+        const jsonData = JSON.parse(await fsPromises.readFile(sourceFilePath, "utf8"));
+        const filteredData = filterData(jsonData, filters);
 
-            const [index, property] = key.split("?", 2);
+        totalPageCount = Math.max(Math.ceil(filteredData.length / itemPerPage), 1);
 
-            if (!groupedData[index]) {
-                groupedData[index] = { key: "", value: "", condition: null };
-            }
-
-            if (property === "dataType") {
-                if (strValue === "number") {
-                    const numberValue = Number(groupedData[index].value);
-                    if (isNaN(numberValue)) {
-                        throw new Error(
-                            `The value for '${groupedData[index].key}' is not a valid number.`,
-                        );
-                    }
-                    groupedData[index].value = numberValue;
-                }
-            } else if (property === "condition") {
-                groupedData[index].condition = strValue as Condition;
-            } else {
-                groupedData[index].key = property;
-                groupedData[index].value = strValue;
-            }
-        }
-
-        outputArray = Object.values(groupedData).map((item) => ({
-            key: item.key,
-            value: item.value,
-            condition: item.condition,
-        }));
-
-        const dirPath = path.join(
-            process.cwd(),
-            "src",
-            fileOutputDir,
-            fileName,
-        );
-        const sourceFilePath = path.join(dirPath, fileName + ".json");
-        const targetFilePath = path.join(
-            dirPath,
-            "total_" + fileName + ".json",
-        );
-
-        console.log("dirPath: ", dirPath);
-        console.log("filePath: ", sourceFilePath);
-
-        if (!existsSync(dirPath)) {
-            throw new Error("Directory not found");
-        }
-
-        const fileContent = await fsPromises.readFile(sourceFilePath, "utf8");
-        const jsonData = JSON.parse(fileContent);
-
-        const result = jsonData.filter((item: FeedField) => {
-            return outputArray.every((filter) => {
-                if (!item[filter.key]) {
-                    return false;
-                }
-
-                if (typeof filter.value === "string") {
-                    return filterString(filter, item);
-                }
-
-                const extractedNumber = item[filter.key].match(/[0-9.,]+/g);
-                if (!extractedNumber) {
-                    return false;
-                }
-
-                return filterNumber(filter, Number(extractedNumber[0]));
-            });
-        }) as unknown[];
-
-        await fsPromises.writeFile(
-            targetFilePath,
-            JSON.stringify(result, null, 2),
-        );
-
-        totalPageCount = Math.max(Math.ceil(result.length / itemPerPage), 1);
+        await fsPromises.writeFile(targetFilePath, JSON.stringify(filteredData, null, 2));
     } catch (error) {
-        const err = error as Error;
-        return {
-            message: err.message,
-        };
+        return { message: (error as Error).message };
     }
-
-    const encodedOutputArray = encodeURIComponent(JSON.stringify(outputArray));
 
     redirect(
         `/file?name=${fileName}&page=1&totalPageCount=${totalPageCount}&filters=${encodedOutputArray}`,

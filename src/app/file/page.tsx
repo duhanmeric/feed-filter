@@ -1,16 +1,14 @@
-import { FilterFields } from "@/actions/file.actions";
 import { Badge } from "@/components/ui/badge";
 import Items from "./items";
 import { Suspense } from "react";
 import FilterCardSkeleton from "@/components/templates/FilterCardSkeleton";
 import { getSearchParams } from "@/lib/utils";
+import { FilterFields } from "@/actions/helpers.actions";
 
 export default async function FilePage({ searchParams }: Params) {
     const params = getSearchParams(searchParams, "name", "filters", "totalPageCount", "page");
 
     if (!params.found) {
-        console.log("No params found");
-
         return <div>No {params.missingParam} found</div>;
     }
 

@@ -1,4 +1,4 @@
-import { FeedField } from "@/actions/file.actions";
+import { FeedField } from "@/actions/helpers.actions";
 import Pagination from "@/components/templates/Pagination";
 import { fileOutputDir, itemPerPage } from "@/constants";
 import { existsSync, promises as fsPromises } from "fs";
@@ -38,6 +38,7 @@ type Props = {
 
 const Items = async ({ fileNameFromUrl, page, totalPageCount }: Props) => {
     const result = await getFile(fileNameFromUrl, Number(page));
+
     return (
         <div>
             <div className="flex flex-col items-center justify-between gap-2 md:flex-row">
@@ -46,6 +47,11 @@ const Items = async ({ fileNameFromUrl, page, totalPageCount }: Props) => {
                 </div>
                 <Pagination currentPage={Number(page)} totalPageCount={Number(totalPageCount)} />
             </div>
+            {result.data.length === 0 && (
+                <div className="mb-4 flex h-[500px] items-center justify-center text-2xl font-bold">
+                    No items found
+                </div>
+            )}
             {result.data.map((item, index) => (
                 <div key={index} className="my-4 rounded-sm border border-black p-4">
                     <pre className="whitespace-break-spaces break-words text-sm">

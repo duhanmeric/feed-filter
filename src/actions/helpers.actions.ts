@@ -1,14 +1,10 @@
-import { STRING_CONDITION_VALUES } from "@/constants/string";
+import { STRING_CONDITION_TYPES, STRING_CONDITION_VALUES } from "@/constants/string";
 import axios from "axios";
-import {
-    createWriteStream,
-    existsSync,
-    promises as fsPromises,
-    mkdirSync,
-} from "fs";
-import { FeedField, FilterFields } from "./file.actions";
-import { NUMBER_CONDITION_VALUES } from "@/constants/number";
+import { createWriteStream, existsSync, promises as fsPromises, mkdirSync } from "fs";
+import { NUMBER_CONDITION_TYPES, NUMBER_CONDITION_VALUES } from "@/constants/number";
 import path from "path";
+import { parseStringPromise } from "xml2js";
+import { fileOutputDir } from "@/constants";
 
 export const getExtensionFromContentType = (contentType: string): string => {
     if (contentType.includes("xml")) {
@@ -18,53 +14,42 @@ export const getExtensionFromContentType = (contentType: string): string => {
     throw new Error("Unsupported content type");
 };
 
-export const downloadFile = async (
-    url: string,
-    outputPath: string,
-): Promise<string> => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const response = await axios.get(url, {
-                responseType: "stream",
-                timeout: 30000,
-                timeoutErrorMessage: "Timeout",
-            });
+export const downloadFile = async (url: string, outputPath: string): Promise<string> => {
+    try {
+        const res = await axios.get(url, {
+            responseType: "stream",
+            timeout: 30000,
+            timeoutErrorMessage: "Timeout",
+        });
 
-            const directory = path.dirname(outputPath);
-            if (!existsSync(directory)) {
-                mkdirSync(directory, { recursive: true });
-            }
-            const extension = getExtensionFromContentType(
-                response.headers["content-type"],
-            );
-
-            const fullOutputPath = outputPath + extension;
-            const writer = createWriteStream(fullOutputPath);
-
-            response.data.pipe(writer);
-
-            writer.on("finish", async () => {
-                const content = await fsPromises.readFile(fullOutputPath, {
-                    encoding: "utf8",
-                });
-                resolve(content);
-            });
-            writer.on("error", (error) =>
-                reject(new Error(`Error writing the file: ${error.message}`)),
-            );
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                reject(
-                    new Error(`Error downloading the file: ${error.message}`),
-                );
-            } else {
-                reject(new Error("An unexpected error occurred"));
-            }
+        const directory = path.dirname(outputPath);
+        if (!existsSync(directory)) {
+            mkdirSync(directory, { recursive: true });
         }
+
+        const extension = getExtensionFromContentType(res.headers["content-type"]);
+        const fullOutputPath = outputPath + extension;
+        await streamToFile(res.data, fullOutputPath);
+
+        return fsPromises.readFile(fullOutputPath, { encoding: "utf8" });
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(`Error downloading the file: ${error.message}`);
+        }
+        throw new Error("An unexpected error occurred");
+    }
+};
+
+const streamToFile = async (stream: NodeJS.WriteStream, outputPath: string) => {
+    return new Promise((resolve, reject) => {
+        const writer = createWriteStream(outputPath);
+        stream.pipe(writer);
+        writer.on("finish", resolve);
+        writer.on("error", reject);
     });
 };
 
-export function findFirstArray(data: any): any {
+export const findFirstArray = (data: any): any => {
     if (Array.isArray(data)) {
         return data;
     } else if (typeof data === "object" && data !== null) {
@@ -76,7 +61,109 @@ export function findFirstArray(data: any): any {
         }
     }
     return null;
-}
+};
+
+type FilterObj = {
+    [index: string]: FilterFields;
+};
+
+type Condition = NUMBER_CONDITION_TYPES | STRING_CONDITION_TYPES | null;
+
+export type FilterFields = {
+    key: string;
+    value: string | number;
+    condition: Condition;
+};
+
+export type FeedField = {
+    [key: string]: string;
+};
+
+export const parseFormData = (formData: FormData) => {
+    const formDataArr = formData.entries();
+    const groupedData: FilterObj = {};
+
+    for (let [key, value] of formDataArr) {
+        const strValue = value as string;
+
+        if (!strValue.trim()) {
+            throw new Error(`Form data for '${key}' cannot be empty.`);
+        }
+
+        const [index, property] = key.split("?", 2);
+        if (!groupedData[index]) {
+            groupedData[index] = { key: "", value: "", condition: null };
+        }
+
+        if (property === "dataType") {
+            if (strValue === "number") {
+                const numberValue = Number(groupedData[index].value);
+                if (isNaN(numberValue)) {
+                    throw new Error(
+                        `The value for '${groupedData[index].key}' is not a valid number.`,
+                    );
+                }
+                groupedData[index].value = numberValue;
+            }
+        } else if (property === "condition") {
+            groupedData[index].condition = strValue as Condition;
+        } else {
+            groupedData[index].key = property;
+            groupedData[index].value = strValue;
+        }
+    }
+
+    return Object.values(groupedData).map((item) => ({
+        key: item.key,
+        value: item.value,
+        condition: item.condition,
+    }));
+};
+
+export const getFilePaths = (fileName: string) => {
+    const dirPath = path.join(process.cwd(), "src", fileOutputDir, fileName);
+    const sourceFilePath = path.join(dirPath, fileName + ".json");
+    const targetFilePath = path.join(dirPath, "total_" + fileName + ".json");
+
+    if (!existsSync(dirPath)) {
+        throw new Error("Directory not found");
+    }
+
+    return { sourceFilePath, targetFilePath };
+};
+
+export const filterData = (jsonData: FeedField[], filters: FilterFields[]) => {
+    const result = jsonData.filter((item: FeedField) => {
+        return filters.every((filter) => {
+            if (!item[filter.key]) {
+                return false;
+            }
+
+            if (typeof filter.value === "string") {
+                return filterString(filter, item);
+            }
+
+            const extractedNumber = item[filter.key].match(/[0-9.,]+/g);
+            if (!extractedNumber) {
+                return false;
+            }
+
+            return filterNumber(filter, Number(extractedNumber[0]));
+        });
+    }) as unknown[];
+
+    return result;
+};
+
+export const parseAndExtract = async (fileContent: string) => {
+    const result = await parseStringPromise(fileContent, {
+        explicitArray: false,
+        mergeAttrs: true,
+        explicitRoot: false,
+        ignoreAttrs: true,
+    });
+    return findFirstArray(result);
+};
 
 export const filterString = (filter: FilterFields, item: FeedField) => {
     if (filter.condition === STRING_CONDITION_VALUES.EXACTLY) {

@@ -6,8 +6,6 @@ export default function FilterPage({ searchParams }: Params) {
     const params = getSearchParams(searchParams, "name", "keys");
 
     if (!params.found) {
-        console.log("No params found");
-
         return <div>No {params.missingParam} found</div>;
     }
 
