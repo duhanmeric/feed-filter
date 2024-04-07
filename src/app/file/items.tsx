@@ -8,13 +8,7 @@ async function getFile(uniqueFileId: string, page: number) {
     const fileName = `total_${uniqueFileId}.json`;
 
     try {
-        const filePath = path.join(
-            process.cwd(),
-            "src",
-            fileOutputDir,
-            uniqueFileId,
-            fileName,
-        );
+        const filePath = path.join(process.cwd(), "src", fileOutputDir, uniqueFileId, fileName);
 
         if (!existsSync(filePath)) {
             throw new Error("File not found");
@@ -24,10 +18,7 @@ async function getFile(uniqueFileId: string, page: number) {
         const jsonData = JSON.parse(fileContent) as FeedField[];
 
         const startIndex = (page - 1) * itemPerPage;
-        const paginatedResults = jsonData.slice(
-            startIndex,
-            startIndex + itemPerPage,
-        );
+        const paginatedResults = jsonData.slice(startIndex, startIndex + itemPerPage);
 
         return {
             data: paginatedResults,
@@ -53,26 +44,17 @@ const Items = async ({ fileNameFromUrl, page, totalPageCount }: Props) => {
                 <div>
                     <span>{result.totalCount}</span> items found
                 </div>
-                <Pagination
-                    currentPage={Number(page)}
-                    totalPageCount={Number(totalPageCount)}
-                />
+                <Pagination currentPage={Number(page)} totalPageCount={Number(totalPageCount)} />
             </div>
             {result.data.map((item, index) => (
-                <div
-                    key={index}
-                    className="my-4 rounded-sm border border-black p-4"
-                >
+                <div key={index} className="my-4 rounded-sm border border-black p-4">
                     <pre className="whitespace-break-spaces break-words text-sm">
                         {JSON.stringify(item, null, 2)}
                     </pre>
                 </div>
             ))}
             <div className="flex justify-center md:justify-end">
-                <Pagination
-                    currentPage={Number(page)}
-                    totalPageCount={Number(totalPageCount)}
-                />
+                <Pagination currentPage={Number(page)} totalPageCount={Number(totalPageCount)} />
             </div>
         </div>
     );

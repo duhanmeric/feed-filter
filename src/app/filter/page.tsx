@@ -1,23 +1,18 @@
 import KeyFilter from "@/components/templates/KeyFilter";
 import { Badge } from "@/components/ui/badge";
+import { getSearchParams } from "@/lib/utils";
 
-export default function FilterPage({
-    searchParams,
-}: {
-    searchParams?: { [key: string]: string };
-}) {
-    const { name, keys } = searchParams || {};
+export default function FilterPage({ searchParams }: Params) {
+    const params = getSearchParams(searchParams, "name", "keys");
 
-    if (!name) {
-        return <div>No file name found</div>;
+    if (!params.found) {
+        console.log("No params found");
+
+        return <div>No {params.missingParam} found</div>;
     }
 
-    if (!keys) {
-        return <div>No file keys found</div>;
-    }
-
-    const fileNameFromUrl = name as string;
-    const fileKeysFromUrl = JSON.parse(decodeURIComponent(keys));
+    const fileNameFromUrl = params.queries.name as string;
+    const fileKeysFromUrl = JSON.parse(decodeURIComponent(params.queries.keys));
 
     return (
         <main className="container h-full max-w-screen-2xl justify-center py-4">
@@ -27,7 +22,7 @@ export default function FilterPage({
                 <Badge variant="secondary">{fileNameFromUrl}</Badge>
             </div>
 
-            <KeyFilter fileName={name} keys={fileKeysFromUrl} />
+            <KeyFilter fileName={fileNameFromUrl} keys={fileKeysFromUrl} />
         </main>
     );
 }

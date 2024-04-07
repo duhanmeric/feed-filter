@@ -8,3 +8,9 @@ type ActionReturn<T> =
           message: string;
           data: null;
       };
+
+type SearchParams = { [key: string]: string };
+
+type Params = {
+    searchParams: SearchParams;
+};

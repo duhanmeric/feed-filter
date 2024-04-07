@@ -3,32 +3,19 @@ import { Badge } from "@/components/ui/badge";
 import Items from "./items";
 import { Suspense } from "react";
 import FilterCardSkeleton from "@/components/templates/FilterCardSkeleton";
+import { getSearchParams } from "@/lib/utils";
 
-export default async function FilePage({
-    searchParams,
-}: {
-    searchParams?: { [key: string]: string };
-}) {
-    const { name, page, filters, totalPageCount } = searchParams || {};
+export default async function FilePage({ searchParams }: Params) {
+    const params = getSearchParams(searchParams, "name", "filters", "totalPageCount", "page");
 
-    if (!name) {
-        return <div>No file name found</div>;
+    if (!params.found) {
+        console.log("No params found");
+
+        return <div>No {params.missingParam} found</div>;
     }
 
-    if (!filters) {
-        return <div>No filters found</div>;
-    }
-
-    if (!totalPageCount) {
-        return <div>No totalPageCount found</div>;
-    }
-
-    if (!page) {
-        return <div>No page found</div>;
-    }
-
-    const fileNameFromUrl = name as string;
-    const filtersFromUrl = decodeURIComponent(filters);
+    const fileNameFromUrl = params.queries.name as string;
+    const filtersFromUrl = decodeURIComponent(params.queries.filters);
 
     return (
         <main className="container h-full max-w-screen-2xl justify-center py-4">
@@ -49,8 +36,8 @@ export default async function FilePage({
             <Suspense fallback={<FilterCardSkeleton />}>
                 <Items
                     fileNameFromUrl={fileNameFromUrl}
-                    page={page}
-                    totalPageCount={totalPageCount}
+                    page={params.queries.page}
+                    totalPageCount={params.queries.totalPageCount}
                 />
             </Suspense>
         </main>
