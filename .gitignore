@@ -37,3 +37,7 @@ next-env.d.ts
 
 # uploadedFiles
 /src/uploadedFiles/**/**
+
+# playwright
+/playwright-report/
+/test-results/
