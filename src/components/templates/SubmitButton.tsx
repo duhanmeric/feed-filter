@@ -1,6 +1,7 @@
 import { useFormStatus } from "react-dom";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
+import { TEST_SELECTORS } from "@/constants";
 
 type Props = {
     title: string;
@@ -15,6 +16,7 @@ export default function SubmitButton({ title }: Props) {
             type="submit"
             aria-disabled={pending}
             disabled={pending}
+            data-testid={TEST_SELECTORS.SUBMIT_BUTTON}
         >
             {pending ? (
                 <>

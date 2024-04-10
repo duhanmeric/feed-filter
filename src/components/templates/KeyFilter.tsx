@@ -26,24 +26,17 @@ const KeyFilter = ({ fileName, keys }: Props) => {
     const { toast } = useToast();
     const [selectedKeys, setSelectedKeys] = React.useState<SelectedKey[]>([]);
 
-    const handleSelectKey = useCallback(
-        (isChecked: CheckedState, selectedKey: SelectedKey) => {
-            setSelectedKeys((prevSelectedKeys) =>
-                isChecked
-                    ? [...prevSelectedKeys, selectedKey]
-                    : prevSelectedKeys.filter(
-                          (key) => key.label !== selectedKey.label,
-                      ),
-            );
-        },
-        [],
-    );
+    const handleSelectKey = useCallback((isChecked: CheckedState, selectedKey: SelectedKey) => {
+        setSelectedKeys((prevSelectedKeys) =>
+            isChecked
+                ? [...prevSelectedKeys, selectedKey]
+                : prevSelectedKeys.filter((key) => key.label !== selectedKey.label),
+        );
+    }, []);
 
     const updateKeyDataType = useCallback((e: KEY_TYPES, label: string) => {
         setSelectedKeys((prevSelectedKeys) =>
-            prevSelectedKeys.map((key) =>
-                key.label === label ? { ...key, dataType: e } : key,
-            ),
+            prevSelectedKeys.map((key) => (key.label === label ? { ...key, dataType: e } : key)),
         );
     }, []);
 
@@ -59,8 +52,7 @@ const KeyFilter = ({ fileName, keys }: Props) => {
         } else {
             toast({
                 title: "Success!",
-                description:
-                    "Please take a seat while we are processing your file.",
+                description: "Please take a seat while we are processing your file.",
             });
         }
     };
@@ -70,11 +62,7 @@ const KeyFilter = ({ fileName, keys }: Props) => {
             <h1 className="mb-2">Select your filter</h1>
             <div className="grid grid-cols-2 space-y-2 md:grid-cols-3">
                 {keys.map((key) => (
-                    <KeyCheck
-                        key={key}
-                        keyLabel={key}
-                        onCheckedChange={handleSelectKey}
-                    />
+                    <KeyCheck key={key} keyLabel={key} onCheckedChange={handleSelectKey} />
                 ))}
             </div>
 

@@ -6,6 +6,7 @@ import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
 import { fileDownload } from "@/actions/file.actions";
 import SubmitButton from "./SubmitButton";
+import { TEST_SELECTORS } from "@/constants";
 
 const FileFormURL = () => {
     const { toast } = useToast();
@@ -17,12 +18,12 @@ const FileFormURL = () => {
                 variant: "destructive",
                 title: "Uh oh! Something went wrong.",
                 description: result.message,
+                "aria-label": TEST_SELECTORS.ERROR_TOAST,
             });
         } else {
             toast({
                 title: "Success!",
-                description:
-                    "Please take a seat while we are processing your file.",
+                description: "Please take a seat while we are processing your file.",
             });
         }
     };
@@ -34,10 +35,11 @@ const FileFormURL = () => {
                     <div>
                         <Label htmlFor="fileUrl">Feed URL</Label>
                         <Input
+                            data-testid={TEST_SELECTORS.FEED_URL_INPUT}
                             placeholder="Feed URL..."
                             id="fileUrl"
                             name="fileUrl"
-                            defaultValue="https://www.baqa.com.tr/XMLExport/5E8A9B3E8A984DED8CE5D667CB56B5B9"
+                            // defaultValue="https://www.baqa.com.tr/XMLExport/5E8A9B3E8A984DED8CE5D667CB56B5B9"
                         />
                     </div>
                     <SubmitButton title="Confirm" />

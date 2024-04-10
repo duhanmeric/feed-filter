@@ -1,0 +1,6 @@
+{
+  "window.zoomLevel": 1.2,
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "editor.formatOnSave": true,
+  "editor.lineNumbers": "relative"
+}
