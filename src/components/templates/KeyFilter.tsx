@@ -48,11 +48,13 @@ const KeyFilter = ({ fileName, keys }: Props) => {
                 variant: "destructive",
                 title: "Uh oh! Something went wrong.",
                 description: result.message,
+                "aria-label": "error-toast",
             });
         } else {
             toast({
                 title: "Success!",
                 description: "Please take a seat while we are processing your file.",
+                "aria-label": "success-toast",
             });
         }
     };
@@ -67,7 +69,7 @@ const KeyFilter = ({ fileName, keys }: Props) => {
             </div>
 
             {selectedKeys.length > 0 && (
-                <form className="mt-10 space-y-4" action={clientAction}>
+                <form className="mt-10 space-y-4" action={clientAction} data-testid="key-form">
                     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                         {selectedKeys.map((key, index) => (
                             <div

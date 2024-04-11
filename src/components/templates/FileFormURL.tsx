@@ -6,7 +6,6 @@ import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
 import { fileDownload } from "@/actions/file.actions";
 import SubmitButton from "./SubmitButton";
-import { TEST_SELECTORS } from "@/constants";
 
 const FileFormURL = () => {
     const { toast } = useToast();
@@ -18,7 +17,7 @@ const FileFormURL = () => {
                 variant: "destructive",
                 title: "Uh oh! Something went wrong.",
                 description: result.message,
-                "aria-label": TEST_SELECTORS.ERROR_TOAST,
+                "aria-label": "error-toast",
             });
         } else {
             toast({
@@ -35,7 +34,7 @@ const FileFormURL = () => {
                     <div>
                         <Label htmlFor="fileUrl">Feed URL</Label>
                         <Input
-                            data-testid={TEST_SELECTORS.FEED_URL_INPUT}
+                            data-testid="feed-url-input"
                             placeholder="Feed URL..."
                             id="fileUrl"
                             name="fileUrl"

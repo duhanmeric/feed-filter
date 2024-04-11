@@ -1,93 +1,137 @@
 import { test, expect } from "@playwright/test";
+import { deleteRecursively, waitForDirectory } from "./helpers";
 import path from "path";
 import { promises as fsPromises } from "fs";
-import { TEST_CONSTANTS } from "./constants";
-import { deleteRecursively, waitForDirectory } from "./helpers";
 
-test.describe("Feed Download", () => {
+test.describe("Feed Download Application Tests", () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto(TEST_CONSTANTS.HOME_PAGE.URL);
+        await page.goto("/");
         await page.waitForLoadState();
     });
 
-    test("test test", async ({ page }) => {
-        const pagetitle = await page.title();
-        expect(pagetitle).toBe(TEST_CONSTANTS.HOME_PAGE.PAGE_TITLE);
+    test.describe("Part 1: Initial Page and Form Submission", () => {
+        test("check if initial elements are visible", async ({ page }) => {
+            const input = page.getByTestId("feed-url-input");
+            const button = page.getByTestId("submit-button");
+            await expect(input).toBeVisible();
+            await expect(button).toBeVisible();
+        });
+
+        test("display error toast on form submit with empty input", async ({ page }) => {
+            await page.getByTestId("feed-url-input").fill("");
+            const button = page.getByTestId("submit-button");
+            await button.click();
+            const errorToast = page.getByLabel("error-toast");
+            await expect(errorToast).toBeVisible();
+        });
+
+        test("redirect to /filter and check URL parameters on successful form submission", async ({
+            page,
+        }) => {
+            await page
+                .getByTestId("feed-url-input")
+                .fill("https://www.baqa.com.tr/XMLExport/5E8A9B3E8A984DED8CE5D667CB56B5B9");
+            const button = page.getByTestId("submit-button");
+            await button.click();
+            await page.waitForURL("**/filter?*");
+
+            const url = page.url();
+            expect(url).toContain("/filter");
+
+            expect(new URLSearchParams(url).get("name")).toBeDefined();
+            expect(new URLSearchParams(url).get("keys")).toBeDefined();
+
+            const fileName = page.getByTestId("fileName");
+            await expect(fileName).toBeVisible();
+        });
     });
 
-    test("input and submit button is in the DOM", async ({ page }) => {
-        const input = page.getByTestId(TEST_CONSTANTS.SELECTORS.FEED_URL_INPUT);
-        const button = page.getByTestId(TEST_CONSTANTS.SELECTORS.SUBMIT_BUTTON);
+    test.describe("Part 2: File and Directory Checks", () => {
+        test("verify uploadedFiles directory is created", async () => {
+            const directory = path.join(process.cwd(), "src/uploadedFiles");
+            const directoryExists = await waitForDirectory(directory);
+            expect(directoryExists).toBeTruthy();
+        });
 
-        await expect(input).toBeVisible();
-        await expect(button).toBeVisible();
-    });
+        test("check uploadedFiles directory contains the expected files with matching names", async () => {
+            const directory = path.join(process.cwd(), "src/uploadedFiles");
+            const uuidDirectories = await fsPromises.readdir(directory);
 
-    test("show error toast on form submit with empty input", async ({ page }) => {
-        await page.getByTestId(TEST_CONSTANTS.SELECTORS.FEED_URL_INPUT).fill("");
-        const button = page.getByTestId(TEST_CONSTANTS.SELECTORS.SUBMIT_BUTTON);
-        await button.click();
+            for (const uuidDir of uuidDirectories) {
+                const subDirectoryPath = path.join(directory, uuidDir);
+                const stats = await fsPromises.stat(subDirectoryPath);
 
-        const errorToast = page.getByLabel("error-toast");
-        await expect(errorToast).toBeVisible();
-    });
+                if (stats.isDirectory()) {
+                    const files = await fsPromises.readdir(subDirectoryPath);
+                    const xmlFile = files.find((file) => file.endsWith(".xml"));
+                    const jsonFile = files.find((file) => file.endsWith(".json"));
 
-    test("redirect to /filter and check URL parameters on successful form submission", async ({
-        page,
-    }) => {
-        await page
-            .getByTestId(TEST_CONSTANTS.SELECTORS.FEED_URL_INPUT)
-            .fill(TEST_CONSTANTS.TEST_FEED_URL);
-        const button = page.getByTestId(TEST_CONSTANTS.SELECTORS.SUBMIT_BUTTON);
-        await button.click();
+                    expect(xmlFile).toBeDefined();
+                    expect(jsonFile).toBeDefined();
 
-        await page.waitForURL(TEST_CONSTANTS.FILTER_PAGE.REGEX_URL);
-
-        const url = page.url();
-        const params = new URLSearchParams(url);
-        const fileName = page.getByTestId(TEST_CONSTANTS.SELECTORS.FILENAME);
-        const keys = await page.getByTestId(TEST_CONSTANTS.SELECTORS.KEY).all();
-
-        expect(url).toContain(TEST_CONSTANTS.FILTER_PAGE.URL);
-        expect(params.get(TEST_CONSTANTS.FILTER_PAGE.NAME_PARAM)).toBeDefined();
-        expect(params.get(TEST_CONSTANTS.FILTER_PAGE.KEYS_PARAM)).toBeDefined();
-        await expect(fileName).toBeVisible();
-
-        expect(keys).toBeTruthy();
-    });
-
-    test("uploadedFiles directory is created", async () => {
-        const directory = path.join(process.cwd(), TEST_CONSTANTS.FILE_OUTPUT_DIR);
-        const directoryExists = await waitForDirectory(directory);
-        expect(directoryExists).toBeTruthy();
-    });
-
-    test("uploadedFiles directory contains the expected files with matching names", async () => {
-        const directory = path.join(process.cwd(), TEST_CONSTANTS.FILE_OUTPUT_DIR);
-
-        const uuidDirectories = await fsPromises.readdir(directory);
-        for (const uuidDir of uuidDirectories) {
-            const subDirectoryPath = path.join(directory, uuidDir);
-            const stats = await fsPromises.stat(subDirectoryPath);
-            if (stats.isDirectory()) {
-                const files = await fsPromises.readdir(subDirectoryPath);
-                const xmlFile = files.find((file) => file.endsWith(".xml"));
-                const jsonFile = files.find((file) => file.endsWith(".json"));
-
-                expect(xmlFile).toBeDefined();
-                expect(jsonFile).toBeDefined();
-
-                const xmlBaseName = xmlFile ? xmlFile.slice(0, -4) : "";
-                const jsonBaseName = jsonFile ? jsonFile.slice(0, -5) : "";
-
-                expect(xmlBaseName).toEqual(jsonBaseName);
+                    const xmlBaseName = xmlFile ? xmlFile.slice(0, -4) : "";
+                    const jsonBaseName = jsonFile ? jsonFile.slice(0, -5) : "";
+                    expect(xmlBaseName).toEqual(jsonBaseName);
+                }
             }
-        }
+        });
     });
+
+    test.describe("Part 3: Key Selection and Form Interaction", () => {
+        test.beforeEach(async ({ page }) => {
+            await page.goto("/");
+            await page.waitForLoadState();
+
+            await page
+                .getByTestId("feed-url-input")
+                .fill("https://www.baqa.com.tr/XMLExport/5E8A9B3E8A984DED8CE5D667CB56B5B9");
+            const submitButton = page.getByTestId("submit-button");
+            await submitButton.click();
+
+            await page.waitForURL("**/filter?*");
+        });
+
+        test("selecting number key", async ({ page }) => {
+            const priceKey = page.getByLabel("key-check-g:price");
+            await priceKey.click();
+            await expect(priceKey).toHaveAttribute("aria-checked", "true");
+
+            const keyForm = page.getByTestId("key-form");
+            expect(keyForm).toBeVisible();
+
+            const submitButton = page.getByTestId("submit-button");
+            await submitButton.click();
+
+            const errorToast = page.getByLabel("error-toast");
+            await expect(errorToast).toBeVisible();
+
+            const keyInput = page.getByTestId("key-input-g:price");
+            await keyInput.fill("5000");
+            await page.click('[data-testid="key-datatype-g:price"]');
+
+            await page.waitForSelector('[id="g:price-select"]');
+            await page.click('[id="g:price-select"] >> text=Number');
+
+            await page.click('[data-testid="key-ncondition-g:price"]');
+            await page.waitForSelector('[id="g:price-condition"]');
+            await page.click('[id="g:price-condition"] >> text=GREATER THAN');
+
+            await submitButton.click();
+            const successToast = page.getByLabel("success-toast");
+            await expect(successToast).toBeVisible();
+
+            await page.waitForURL("**/file?*");
+            const url = page.url();
+            expect(url).toContain("/file");
+        });
+
+        // TODO: selecting string key
+    });
+
+    // TODO: Part 4: Rendering the results
 
     test.afterAll(async () => {
-        const directory = path.join(process.cwd(), TEST_CONSTANTS.FILE_OUTPUT_DIR);
-
+        const directory = path.join(process.cwd(), "src/uploadedFiles");
         try {
             await deleteRecursively(directory);
         } catch (error) {

@@ -18,6 +18,7 @@ const KeyInput = ({ keyLabel, placeholder, name }: Props) => {
                 placeholder={placeholder}
                 name={name}
                 type="text"
+                data-testid={`key-input-${keyLabel}`}
             />
         </div>
     );
