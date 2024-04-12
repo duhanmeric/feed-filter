@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write ./src/**/*.{ts,tsx}",
-    "test": "npx playwright test"
+    "test": "npx playwright test --workers 1"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.0.4",
