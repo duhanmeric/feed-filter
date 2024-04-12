@@ -31,5 +31,5 @@
 - [x] dosyaları sil
 - [x] part 1 test (feed url submit)
 - [x] part 2 test (feed key selection submit)
-- [ ] part 1 test (rendering the result)
+- [ ] part 3 test (rendering the result)
 
