@@ -1,12 +1,13 @@
+## Initial
 - [x] type'ları düzelt ve gereksiz kodları sil
 - [x] dosyaya isim ver ve bu isme göre aksiyonları gerçekleştir (daha sonra silmek için)
+- [x] error handling
 
 ---
+## Main
 
-- [x] error handling --devam
-
----
-
+- [x] custom koşul yazılabilsin
+- [x] dosya linki girilip curl atılsın
 - [x] filter formunu submitle
 - [x] prettier setup
 - [x] her bir feed için ayrı bir dosya oluştur (adı crypto.randomUUID()'den gelecek)
@@ -26,11 +27,9 @@
 - [x] footer ekle
 - [x] error componenti ekle
 - [x] timeout süresi ekle
-- [ ] url limiti ekle
+- [x] url limiti ekle (auto error)
 - [x] dosyaları sil
+- [x] part 1 test (feed url submit)
+- [x] part 2 test (feed key selection submit)
+- [ ] part 1 test (rendering the result)
 
-
----
-
-- [x] custom koşul yazılabilsin
-- [x] dosya linki girilip curl atılsın
