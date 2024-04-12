@@ -3,6 +3,12 @@ import path from "path";
 import { deleteRecursively, waitForDirectory } from "./helpers";
 import { promises } from "fs";
 
+// tests must run in serial mode instead of parallel
+// because the tests are dependent on each other
+// and the order of the tests is important
+// I choose playwright because nextjs official document
+// recommends e2e tests when working with async server actions
+
 test.describe("ROOT: Feed Download", () => {
     test.describe.configure({ mode: "serial" });
 
@@ -126,6 +132,11 @@ test.describe("ROOT: Feed Download", () => {
 
             const successToast = page.getByLabel("success-toast");
             await expect(successToast).toBeVisible();
+
+            await page.waitForURL("**/file?*");
+
+            const resultCount = page.getByTestId("result-count");
+            await expect(resultCount).toHaveText("4");
         });
     });
 

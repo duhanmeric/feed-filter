@@ -43,7 +43,7 @@ const Items = async ({ fileNameFromUrl, page, totalPageCount }: Props) => {
         <div>
             <div className="flex flex-col items-center justify-between gap-2 md:flex-row">
                 <div>
-                    <span>{result.totalCount}</span> items found
+                    <span data-testid="result-count">{result.totalCount}</span> items found
                 </div>
                 <Pagination currentPage={Number(page)} totalPageCount={Number(totalPageCount)} />
             </div>
