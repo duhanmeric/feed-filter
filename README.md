@@ -31,5 +31,6 @@
 - [x] dosyaları sil
 - [x] part 1 test (feed url submit)
 - [x] part 2 test (feed key selection submit)
-- [ ] part 3 test (rendering the result)
-
+- [x] part 3 test (rendering the result)
+- [ ] add docs
+- [ ] remove console.logs & development only elements
