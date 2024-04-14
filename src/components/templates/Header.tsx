@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 import { Button } from "../ui/button";
 import { clearFiles } from "@/actions/file.actions";
 import DeleteDirButton from "./DeleteDirButton";
@@ -10,7 +10,9 @@ const Header = () => {
             <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
                 <Link href="/">feed-filter</Link>
                 <div className="flex items-center gap-4">
-                    <DeleteDirButton />
+                    <Suspense fallback={"Loading..."}>
+                        <DeleteDirButton />
+                    </Suspense>
                     <form action={clearFiles}>
                         <Button size="sm" variant="outline">
                             Clear All [development only]
