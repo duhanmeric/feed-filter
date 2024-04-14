@@ -16,7 +16,7 @@ export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;
 
     const randomName = crypto.randomUUID();
-    const directoryPath = path.join(process.cwd(), fileOutputDir, randomName);
+    const directoryPath = path.join(process.cwd(), "src", fileOutputDir, randomName);
     const outputPath = path.join(directoryPath, randomName);
     console.log("directoryPath", directoryPath);
     console.log("outputPath", outputPath);
@@ -48,7 +48,7 @@ export const fileDownload = async (formData: FormData) => {
 };
 
 export const clearFiles = async () => {
-    const directory = path.join(process.cwd(), fileOutputDir);
+    const directory = path.join(process.cwd(), "src", fileOutputDir);
 
     const deleteRecursively = async (dir: string) => {
         const files = await fsPromises.readdir(dir, { withFileTypes: true });
@@ -74,7 +74,7 @@ export const clearFiles = async () => {
 };
 
 export const deleteDirectory = async (directoryId: string) => {
-    const dir = path.join(process.cwd(), fileOutputDir, directoryId);
+    const dir = path.join(process.cwd(), "src", fileOutputDir, directoryId);
 
     try {
         await fsPromises.access(dir);

@@ -15,7 +15,7 @@ const Header = () => {
                     </Suspense>
                     <form action={clearFiles}>
                         <Button size="sm" variant="outline">
-                            Clear All [development only]
+                            Clear All
                         </Button>
                     </form>
                 </div>

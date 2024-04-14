@@ -38,7 +38,7 @@ const FileFormURL = () => {
                             placeholder="Feed URL..."
                             id="fileUrl"
                             name="fileUrl"
-                            // defaultValue="https://www.baqa.com.tr/XMLExport/5E8A9B3E8A984DED8CE5D667CB56B5B9"
+                            defaultValue="http://localhost:3000/api/xmlfile"
                         />
                     </div>
                     <SubmitButton title="Confirm" />
