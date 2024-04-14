@@ -38,7 +38,7 @@ test.describe("ROOT: Feed Download", () => {
         test.describe.configure({ mode: "serial" });
 
         test.beforeEach(async ({ page }) => {
-            await page.getByTestId("feed-url-input").fill("http://localhost:3000/api/xmlfile");
+            await page.getByTestId("feed-url-input").fill(process.env.TEST_FEED_URL as string);
             const button = page.getByTestId("submit-button");
             await button.click();
             await page.waitForURL("**/filter?*");
