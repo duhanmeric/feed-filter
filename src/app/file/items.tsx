@@ -8,7 +8,7 @@ async function getFile(uniqueFileId: string, page: number) {
     const fileName = `total_${uniqueFileId}.json`;
 
     try {
-        const filePath = path.join(process.cwd(), "src", fileOutputDir, uniqueFileId, fileName);
+        const filePath = path.join(process.cwd(), fileOutputDir, uniqueFileId, fileName);
 
         if (!existsSync(filePath)) {
             throw new Error("File not found");

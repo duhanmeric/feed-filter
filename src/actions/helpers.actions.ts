@@ -24,6 +24,7 @@ export const downloadFile = async (url: string, outputPath: string): Promise<str
         });
 
         const directory = path.dirname(outputPath);
+        console.log("directory: ", directory);
         if (!existsSync(directory)) {
             mkdirSync(directory, { recursive: true });
         }
@@ -124,7 +125,7 @@ export const parseFormData = (formData: FormData) => {
 };
 
 export const getFilePaths = (fileName: string) => {
-    const dirPath = path.join(process.cwd(), "src", fileOutputDir, fileName);
+    const dirPath = path.join(process.cwd(), fileOutputDir, fileName);
     const sourceFilePath = path.join(dirPath, fileName + ".json");
     const targetFilePath = path.join(dirPath, "total_" + fileName + ".json");
 
