@@ -37,7 +37,9 @@ export const downloadFile = async (url: string, outputPath: string): Promise<str
         if (axios.isAxiosError(error)) {
             throw new Error(`Error downloading the file: ${error.message}`);
         }
-        throw new Error(`An unexpected error occurred, here error lies`);
+        throw new Error(
+            `An unexpected error occurred, here error lies ${(error as Error).message}`,
+        );
     }
 };
 
