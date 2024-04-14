@@ -18,8 +18,6 @@ export const fileDownload = async (formData: FormData) => {
     const randomName = crypto.randomUUID();
     const directoryPath = path.join(process.cwd(), "src", fileOutputDir, randomName);
     const outputPath = path.join(directoryPath, randomName);
-    console.log("directoryPath", directoryPath);
-    console.log("outputPath", outputPath);
 
     let keys: string[] = [];
 

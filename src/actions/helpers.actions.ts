@@ -24,7 +24,6 @@ export const downloadFile = async (url: string, outputPath: string): Promise<str
         });
 
         const directory = path.dirname(outputPath);
-        console.log("directory: ", directory);
         if (!existsSync(directory)) {
             mkdirSync(directory, { recursive: true });
         }
