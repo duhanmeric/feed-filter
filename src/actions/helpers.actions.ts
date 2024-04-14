@@ -11,7 +11,7 @@ export const getExtensionFromContentType = (contentType: string): string => {
         return ".xml";
     }
 
-    throw new Error("Unsupported content type");
+    throw new Error(`Unsupported content type: ${contentType}`);
 };
 
 export const downloadFile = async (url: string, outputPath: string): Promise<string> => {
@@ -20,6 +20,7 @@ export const downloadFile = async (url: string, outputPath: string): Promise<str
             responseType: "stream",
             timeout: 30000,
             timeoutErrorMessage: "Timeout",
+            insecureHTTPParser: true,
         });
 
         const directory = path.dirname(outputPath);
@@ -36,7 +37,7 @@ export const downloadFile = async (url: string, outputPath: string): Promise<str
         if (axios.isAxiosError(error)) {
             throw new Error(`Error downloading the file: ${error.message}`);
         }
-        throw new Error("An unexpected error occurred");
+        throw new Error(`An unexpected error occurred, here error lies`);
     }
 };
 
