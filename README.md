@@ -49,6 +49,13 @@ App downloads a file from a specified URL and writes it to a directory on the se
     
     If you want to delete your files, you can click the delete button placed in the Header.
     
+In Action
+----------------------
+
+
+<iframe width="100%" height="315" src="https://duhan.dev/feed-filter.mov" frameborder="0"  allowfullscreen></iframe>
+
+For more detailed information you can visit my blog: [https://duhan.dev/posts/feed-filter/](https://duhan.dev/posts/feed-filter/)
 
 Why not in production?
 ----------------------
