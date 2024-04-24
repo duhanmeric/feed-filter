@@ -135,7 +135,24 @@ export const getFilePaths = (fileName: string) => {
     return { sourceFilePath, targetFilePath };
 };
 
-export const filterData = (jsonData: FeedField[], filters: FilterFields[]) => {
+function extractNumber(price: string) {
+    let cleanPrice = price.replace(/[^\d\,\.\-]/g, '');
+
+    let lastComma = cleanPrice.lastIndexOf(',');
+    let lastDot = cleanPrice.lastIndexOf('.');
+
+    if (lastDot > lastComma) {
+        cleanPrice = cleanPrice.replace(/,/g, '');
+    } else if (lastComma > lastDot) {
+        cleanPrice = cleanPrice.replace(/\./g, '').replace(/,/g, '.');
+    } else {
+        cleanPrice = cleanPrice.replace(/[\,\.]/g, '');
+    }
+
+    return Math.floor(parseFloat(cleanPrice));
+}
+
+export const filterData = (jsonData: FeedField[], filters: FilterFields[]): unknown[] => {
     const result = jsonData.filter((item: FeedField) => {
         return filters.every((filter) => {
             if (!item[filter.key]) {
@@ -146,12 +163,12 @@ export const filterData = (jsonData: FeedField[], filters: FilterFields[]) => {
                 return filterString(filter, item);
             }
 
-            const extractedNumber = item[filter.key].match(/[0-9.,]+/g);
+            const extractedNumber = extractNumber(item[filter.key]);
             if (!extractedNumber) {
                 return false;
             }
 
-            return filterNumber(filter, Number(extractedNumber[0]));
+            return filterNumber(filter, extractedNumber);
         });
     }) as unknown[];
 
