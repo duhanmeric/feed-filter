@@ -48,8 +48,7 @@ export const fileDownload = async (formData: FormData) => {
     cookies().set(cookieNames.fileName, randomName, { maxAge: fileDestroyDuration });
 };
 
-export const clearFiles = async () => {
-    const directory = path.join(process.cwd(), "src", fileOutputDir);
+const deleteCookies = () => {
     const nameCookie = cookies().get(cookieNames.fileName);
     const keysCookie = cookies().get(cookieNames.keys);
     const filtersCookie = cookies().get(cookieNames.filters);
@@ -65,6 +64,11 @@ export const clearFiles = async () => {
     if (filtersCookie) {
         cookies().delete(cookieNames.filters);
     }
+};
+
+export const clearFiles = async () => {
+    const directory = path.join(process.cwd(), "src", fileOutputDir);
+    deleteCookies();
 
     const deleteRecursively = async (dir: string) => {
         const files = await fsPromises.readdir(dir, { withFileTypes: true });
@@ -91,7 +95,7 @@ export const clearFiles = async () => {
 
 export const deleteDirectory = async (directoryId: string) => {
     const dir = path.join(process.cwd(), "src", fileOutputDir, directoryId);
-
+    deleteCookies();
     try {
         await fsPromises.access(dir);
 
@@ -128,9 +132,7 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
 
     try {
         const filters = parseFormData(formData);
-
         encodedOutputArray = encodeURIComponent(JSON.stringify(filters));
-
         const { sourceFilePath, targetFilePath } = getFilePaths(fileName);
 
         const jsonData = JSON.parse(await fsPromises.readFile(sourceFilePath, "utf8"));
@@ -144,7 +146,5 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
     }
 
     cookies().set(cookieNames.filters, encodedOutputArray, { maxAge: fileDestroyDuration });
-    redirect(
-        `/file?name=${fileName}&page=1&totalPageCount=${totalPageCount}`,
-    );
+    redirect(`/file?name=${fileName}&page=1&totalPageCount=${totalPageCount}`);
 };

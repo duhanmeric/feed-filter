@@ -26,7 +26,7 @@ export type SelectedKey = {
     dataType: KEY_TYPES;
     value: string | number;
 } & {
-    condition: Condition
+    condition: Condition;
 };
 
 const KeyFilter = ({ fileName, keys, defaultKeys }: Props) => {
@@ -71,7 +71,12 @@ const KeyFilter = ({ fileName, keys, defaultKeys }: Props) => {
             <h1 className="mb-2">Select your filter</h1>
             <div className="grid grid-cols-2 space-y-2 md:grid-cols-3">
                 {keys.map((key) => (
-                    <KeyCheck isChecked={selectedKeys.some((k) => k.label === key)} key={key} keyLabel={key} onCheckedChange={handleSelectKey} />
+                    <KeyCheck
+                        isChecked={selectedKeys.some((k) => k.label === key)}
+                        key={key}
+                        keyLabel={key}
+                        onCheckedChange={handleSelectKey}
+                    />
                 ))}
             </div>
 

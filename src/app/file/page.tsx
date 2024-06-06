@@ -20,7 +20,14 @@ export default async function FilePage({ searchParams }: Params) {
     }
 
     const fileNameFromUrl = params.queries.name as string;
-    const filters = JSON.parse(decodeURIComponent(filtersFromCookie.value));
+    const filters: FilterFields = JSON.parse(decodeURIComponent(filtersFromCookie.value));
+    const defaultKeys = Object.entries(filters).map(([key, objValue]) => {
+        return {
+            key,
+            condition: objValue.condition,
+            value: objValue.value,
+        };
+    });
 
     return (
         <main className="container h-full max-w-screen-2xl justify-center py-4">
@@ -31,7 +38,7 @@ export default async function FilePage({ searchParams }: Params) {
             </div>
             <div className="my-2">
                 <span className="mr-2">Your filters:</span>
-                {filters.map((filter: FilterFields) => (
+                {defaultKeys.map((filter) => (
                     <Badge key={filter.key} className="mr-2">
                         {filter.key} {filter.condition} {filter.value}
                     </Badge>

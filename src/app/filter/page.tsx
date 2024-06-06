@@ -15,12 +15,14 @@ export default function FilterPage() {
 
     const fileKeysFromCookie = JSON.parse(decodeURIComponent(keys.value));
     const fileNameFromCookie = name.value;
-    const defaultKeyArr: FilterFields[] = defaultCheckedKeys ? JSON.parse(decodeURIComponent(defaultCheckedKeys)) : [];
+    const defaultKeyArr: FilterFields = defaultCheckedKeys
+        ? JSON.parse(decodeURIComponent(defaultCheckedKeys))
+        : [];
 
-    const defaultKeys: SelectedKey[] = defaultKeyArr.map((field) => {
-        const dataType = typeof field.value === "string" ? "string" : "number";
-        return { label: field.key, dataType, value: field.value, condition: field.condition }
-    })
+    const defaultKeys: SelectedKey[] = Object.entries(defaultKeyArr).map(([key, objValue]) => {
+        const dataType = typeof objValue.value === "string" ? "string" : "number";
+        return { label: key, dataType, value: objValue.value, condition: objValue.condition };
+    });
 
     return (
         <main className="container h-full max-w-screen-2xl justify-center py-4">
@@ -32,7 +34,11 @@ export default function FilterPage() {
                 </Badge>
             </div>
 
-            <KeyFilter defaultKeys={defaultKeys} fileName={fileNameFromCookie} keys={fileKeysFromCookie} />
+            <KeyFilter
+                defaultKeys={defaultKeys}
+                fileName={fileNameFromCookie}
+                keys={fileKeysFromCookie}
+            />
         </main>
     );
 }
