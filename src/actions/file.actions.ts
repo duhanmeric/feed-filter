@@ -4,13 +4,15 @@ import path from "path";
 import {
     downloadFile,
     filterData,
+    getAllKeys,
     getFilePaths,
     parseAndExtract,
     parseFormData,
 } from "./helpers.actions";
 import { promises as fsPromises } from "fs";
 import { redirect } from "next/navigation";
-import { fileDestroyDuration, fileOutputDir, itemPerPage } from "@/constants";
+import { cookieNames, fileDestroyDuration, fileOutputDir, itemPerPage } from "@/constants";
+import { cookies } from "next/headers";
 
 export const fileDownload = async (formData: FormData) => {
     const url = formData.get("fileUrl") as string;
@@ -29,7 +31,7 @@ export const fileDownload = async (formData: FormData) => {
         const fileContent = await downloadFile(url, outputPath);
         const resultArr = await parseAndExtract(fileContent);
 
-        keys = [...Object.keys(resultArr[0])];
+        keys = getAllKeys(resultArr[0]);
 
         await fsPromises.writeFile(outputPath + ".json", JSON.stringify(resultArr, null, 2));
 
@@ -42,11 +44,27 @@ export const fileDownload = async (formData: FormData) => {
     }
 
     const encodedKeys = encodeURIComponent(JSON.stringify(keys));
-    redirect(`/filter?name=${randomName}&keys=${encodedKeys}`);
+    cookies().set(cookieNames.keys, encodedKeys, { maxAge: fileDestroyDuration });
+    cookies().set(cookieNames.fileName, randomName, { maxAge: fileDestroyDuration });
 };
 
 export const clearFiles = async () => {
     const directory = path.join(process.cwd(), "src", fileOutputDir);
+    const nameCookie = cookies().get(cookieNames.fileName);
+    const keysCookie = cookies().get(cookieNames.keys);
+    const filtersCookie = cookies().get(cookieNames.filters);
+
+    if (nameCookie) {
+        cookies().delete(cookieNames.fileName);
+    }
+
+    if (keysCookie) {
+        cookies().delete(cookieNames.keys);
+    }
+
+    if (filtersCookie) {
+        cookies().delete(cookieNames.filters);
+    }
 
     const deleteRecursively = async (dir: string) => {
         const files = await fsPromises.readdir(dir, { withFileTypes: true });
@@ -110,6 +128,7 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
 
     try {
         const filters = parseFormData(formData);
+
         encodedOutputArray = encodeURIComponent(JSON.stringify(filters));
 
         const { sourceFilePath, targetFilePath } = getFilePaths(fileName);
@@ -124,7 +143,8 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
         return { message: (error as Error).message };
     }
 
+    cookies().set(cookieNames.filters, encodedOutputArray, { maxAge: fileDestroyDuration });
     redirect(
-        `/file?name=${fileName}&page=1&totalPageCount=${totalPageCount}&filters=${encodedOutputArray}`,
+        `/file?name=${fileName}&page=1&totalPageCount=${totalPageCount}`,
     );
 };

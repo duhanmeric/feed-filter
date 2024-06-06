@@ -7,19 +7,22 @@ import type { SelectedKey } from "./KeyFilter";
 type Props = {
     keyLabel: string;
     onCheckedChange: (isChecked: CheckedState, selectedKey: SelectedKey) => void;
+    isChecked: boolean;
 };
 
-const KeyCheck = ({ keyLabel, onCheckedChange }: Props) => {
+const KeyCheck = ({ keyLabel, onCheckedChange, isChecked }: Props) => {
     return (
         <div className="flex items-center gap-2">
             <Checkbox
                 id={keyLabel}
+                checked={isChecked}
                 aria-label={`key-check-${keyLabel}`}
                 data-testid="key-check"
                 onCheckedChange={(e) =>
                     onCheckedChange(e, {
                         label: keyLabel,
                         dataType: "string",
+                        value: "",
                     })
                 }
             />

@@ -11,20 +11,27 @@ import DataType from "./DataType";
 import SubmitButton from "./SubmitButton";
 import StringConditions from "./StringConditions";
 import { KEY, type KEY_TYPES } from "@/constants/key";
+import { Condition } from "@/actions/helpers.actions";
+import { STRING_CONDITION_TYPES } from "@/constants/string";
+import { NUMBER_CONDITION_TYPES } from "@/constants/number";
 
 type Props = {
     keys: string[];
     fileName: string;
+    defaultKeys: SelectedKey[];
 };
 
 export type SelectedKey = {
     label: string;
     dataType: KEY_TYPES;
+    value: string | number;
+} & {
+    condition: Condition
 };
 
-const KeyFilter = ({ fileName, keys }: Props) => {
+const KeyFilter = ({ fileName, keys, defaultKeys }: Props) => {
     const { toast } = useToast();
-    const [selectedKeys, setSelectedKeys] = React.useState<SelectedKey[]>([]);
+    const [selectedKeys, setSelectedKeys] = React.useState<SelectedKey[]>(defaultKeys);
 
     const handleSelectKey = useCallback((isChecked: CheckedState, selectedKey: SelectedKey) => {
         setSelectedKeys((prevSelectedKeys) =>
@@ -64,7 +71,7 @@ const KeyFilter = ({ fileName, keys }: Props) => {
             <h1 className="mb-2">Select your filter</h1>
             <div className="grid grid-cols-2 space-y-2 md:grid-cols-3">
                 {keys.map((key) => (
-                    <KeyCheck key={key} keyLabel={key} onCheckedChange={handleSelectKey} />
+                    <KeyCheck isChecked={selectedKeys.some((k) => k.label === key)} key={key} keyLabel={key} onCheckedChange={handleSelectKey} />
                 ))}
             </div>
 
@@ -85,6 +92,7 @@ const KeyFilter = ({ fileName, keys }: Props) => {
                                                 ? "E.g: 5000"
                                                 : "Enter value"
                                         }
+                                        defaultValue={key.value as string}
                                     />
                                     <DataType
                                         name={`${index}?dataType`}
@@ -95,12 +103,14 @@ const KeyFilter = ({ fileName, keys }: Props) => {
                                 </div>
                                 {key.dataType === KEY.STRING && (
                                     <StringConditions
+                                        defaultValue={key.condition as STRING_CONDITION_TYPES}
                                         keyLabel={key.label}
                                         name={`${index}?condition`}
                                     />
                                 )}
                                 {key.dataType === KEY.NUMBER && (
                                     <NumberConditions
+                                        defaultValue={key.condition as NUMBER_CONDITION_TYPES}
                                         keyLabel={key.label}
                                         name={`${index}?condition`}
                                     />

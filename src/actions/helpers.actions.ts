@@ -5,6 +5,7 @@ import { NUMBER_CONDITION_TYPES, NUMBER_CONDITION_VALUES } from "@/constants/num
 import path from "path";
 import { parseStringPromise } from "xml2js";
 import { fileOutputDir } from "@/constants";
+import { Faster_One } from "next/font/google";
 
 export const getExtensionFromContentType = (contentType: string): string => {
     if (contentType.includes("xml")) {
@@ -70,7 +71,7 @@ type FilterObj = {
     [index: string]: FilterFields;
 };
 
-type Condition = NUMBER_CONDITION_TYPES | STRING_CONDITION_TYPES | null;
+export type Condition = NUMBER_CONDITION_TYPES | STRING_CONDITION_TYPES | null;
 
 export type FilterFields = {
     key: string;
@@ -155,20 +156,44 @@ function extractNumber(price: string) {
 export const filterData = (jsonData: FeedField[], filters: FilterFields[]): unknown[] => {
     const result = jsonData.filter((item: FeedField) => {
         return filters.every((filter) => {
-            if (!item[filter.key]) {
-                return false;
-            }
+            if (filter.key.includes(".")) {
+                const value = getNestedValue(item, filter.key);
 
-            if (typeof filter.value === "string") {
-                return filterString(filter, item);
-            }
+                if (Array.isArray(value)) {
+                    if (typeof filter.value === "string") {
+                        const isWordIncludes = value.find((v) => v.includes(filter.value));
+                        return (isWordIncludes || value.includes(filter.value)) && filterString(filter, item);
+                    } else {
+                        const convertedNumberArr = value.map((v) => extractNumber(v));
+                        return filterNumber(filter, convertedNumberArr);
+                    }
+                }
 
-            const extractedNumber = extractNumber(item[filter.key]);
-            if (!extractedNumber) {
-                return false;
-            }
+                if (typeof filter.value === "string") {
+                    return filterString(filter, item);
+                }
 
-            return filterNumber(filter, extractedNumber);
+                const extractedNumber = extractNumber(value);
+                if (!extractedNumber) {
+                    return false;
+                }
+                return filterNumber(filter, extractedNumber);
+            } else {
+                if (!item[filter.key]) {
+                    return false;
+                }
+
+                if (typeof filter.value === "string") {
+                    return filterString(filter, item);
+                }
+
+                const extractedNumber = extractNumber(item[filter.key]);
+                if (!extractedNumber) {
+                    return false;
+                }
+
+                return filterNumber(filter, extractedNumber);
+            }
         });
     }) as unknown[];
 
@@ -185,31 +210,83 @@ export const parseAndExtract = async (fileContent: string) => {
     return findFirstArray(result);
 };
 
-export const filterString = (filter: FilterFields, item: FeedField) => {
-    if (filter.condition === STRING_CONDITION_VALUES.EXACTLY) {
-        return item[filter.key] === filter.value.toString();
+export const getAllKeys = (obj: Record<string, any>, prefix: string = ''): string[] => {
+    return Object.keys(obj).reduce((res: string[], el: string) => {
+        if (typeof obj[el] === 'object' && obj[el] !== null && !Array.isArray(obj[el])) {
+            res = [...res, ...getAllKeys(obj[el], `${prefix}${el}.`)];
+        } else {
+            res.push(prefix + el);
+        }
+        return res;
+    }, []);
+}
+
+const getNestedValue = (obj: any, key: string): any => {
+    const keys = key.split('.');
+    let result = obj;
+
+    for (const k of keys) {
+        if (Array.isArray(result)) {
+            result = result.map(item => item[k]).flat();
+        } else {
+            if (result == null) {
+                return undefined;
+            }
+            result = result[k];
+        }
     }
 
-    return item[filter.key].includes(filter.value.toString());
+    return result;
 };
 
-export const filterNumber = (filter: FilterFields, extractedNumber: number) => {
-    const value = filter.value as number;
+export const filterString = (filter: FilterFields, item: FeedField) => {
+    let valueToCheck = filter.key.includes(".") ? getNestedValue(item, filter.key) : item[filter.key];
+    if (!valueToCheck) {
+        return false;
+    }
 
-    switch (filter.condition) {
+    const filterValue = filter.value.toString();
+
+    if (filter.condition === STRING_CONDITION_VALUES.EXACTLY) {
+        if (Array.isArray(valueToCheck)) {
+            return valueToCheck.includes(filterValue);
+        }
+
+        return valueToCheck === filterValue;
+    }
+
+    if (Array.isArray(valueToCheck)) {
+        return valueToCheck.some((v) => v.includes(filterValue));
+    }
+
+    return valueToCheck.includes(filterValue);
+};
+
+const checkNumberCondition = (condition: string, num: number, value: number) => {
+    switch (condition) {
         case NUMBER_CONDITION_VALUES.GREATER_THAN:
-            return extractedNumber > value;
+            return num > value;
         case NUMBER_CONDITION_VALUES.LESS_THAN:
-            return extractedNumber < value;
+            return num < value;
         case NUMBER_CONDITION_VALUES.EQUAL:
-            return extractedNumber === value;
+            return num === value;
         case NUMBER_CONDITION_VALUES.NOT_EQUAL:
-            return extractedNumber !== value;
+            return num !== value;
         case NUMBER_CONDITION_VALUES.GREATER_THAN_OR_EQUAL:
-            return extractedNumber >= value;
+            return num >= value;
         case NUMBER_CONDITION_VALUES.LESS_THAN_OR_EQUAL:
-            return extractedNumber <= value;
+            return num <= value;
         default:
             return false;
     }
+};
+
+export const filterNumber = (filter: FilterFields, extractedNumber: number | number[]) => {
+    const value = filter.value as number;
+
+    if (Array.isArray(extractedNumber)) {
+        return extractedNumber.some(num => checkNumberCondition(filter.condition!, num, value));
+    }
+
+    return checkNumberCondition(filter.condition!, extractedNumber, value);
 };
