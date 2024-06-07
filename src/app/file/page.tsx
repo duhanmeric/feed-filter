@@ -44,7 +44,6 @@ export default async function FilePage({ searchParams }: Params) {
                     </Badge>
                 ))}
             </div>
-            <br />
             <Suspense fallback={<FilterCardSkeleton />}>
                 <Items
                     fileNameFromUrl={fileNameFromUrl}

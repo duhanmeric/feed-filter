@@ -1,7 +1,9 @@
 import { FeedField } from "@/actions/helpers.actions";
 import Pagination from "@/components/templates/Pagination";
+import { Button } from "@/components/ui/button";
 import { fileOutputDir, itemPerPage } from "@/constants";
 import { existsSync, promises as fsPromises } from "fs";
+import Link from "next/link";
 import path from "path";
 
 async function getFile(uniqueFileId: string, page: number) {
@@ -40,10 +42,15 @@ const Items = async ({ fileNameFromUrl, page, totalPageCount }: Props) => {
     const result = await getFile(fileNameFromUrl, Number(page));
 
     return (
-        <div>
+        <div className="mt-8">
             <div className="flex flex-col items-center justify-between gap-2 md:flex-row">
-                <div>
-                    <span data-testid="result-count">{result.totalCount}</span> items found
+                <div className="flex gap-4 items-center">
+                    <span>
+                        <span data-testid="result-count">{result.totalCount}</span> items found
+                    </span>
+                    <Button size="sm" asChild variant="outline">
+                        <Link href="/filter">Refilter</Link>
+                    </Button>
                 </div>
                 <Pagination currentPage={Number(page)} totalPageCount={Number(totalPageCount)} />
             </div>
