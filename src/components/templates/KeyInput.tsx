@@ -6,9 +6,10 @@ type Props = {
     keyLabel: string;
     placeholder: string;
     name: `${number}?${string}`;
+    defaultValue: string;
 };
 
-const KeyInput = ({ keyLabel, placeholder, name }: Props) => {
+const KeyInput = ({ keyLabel, placeholder, name, defaultValue }: Props) => {
     return (
         <div className="w-full space-y-2">
             <Label htmlFor={keyLabel}>{keyLabel}</Label>
@@ -19,6 +20,7 @@ const KeyInput = ({ keyLabel, placeholder, name }: Props) => {
                 name={name}
                 type="text"
                 data-testid={`key-input-${keyLabel}`}
+                defaultValue={defaultValue}
             />
         </div>
     );

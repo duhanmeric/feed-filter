@@ -1,16 +1,28 @@
-import KeyFilter from "@/components/templates/KeyFilter";
+import { FilterFields } from "@/actions/helpers.actions";
+import KeyFilter, { SelectedKey } from "@/components/templates/KeyFilter";
 import { Badge } from "@/components/ui/badge";
-import { getSearchParams } from "@/lib/utils";
+import { cookieNames } from "@/constants";
+import { cookies } from "next/headers";
 
-export default function FilterPage({ searchParams }: Params) {
-    const params = getSearchParams(searchParams, "name", "keys");
+export default function FilterPage() {
+    const keys = cookies().get(cookieNames.keys);
+    const name = cookies().get(cookieNames.fileName);
+    const defaultCheckedKeys = cookies().get(cookieNames.filters)?.value;
 
-    if (!params.found) {
-        return <div>No {params.missingParam} found</div>;
+    if (!keys || !name) {
+        return <div>No keys or fileName is found!</div>;
     }
 
-    const fileNameFromUrl = params.queries.name as string;
-    const fileKeysFromUrl = JSON.parse(decodeURIComponent(params.queries.keys));
+    const fileKeysFromCookie = JSON.parse(decodeURIComponent(keys.value));
+    const fileNameFromCookie = name.value;
+    const defaultKeyArr: FilterFields = defaultCheckedKeys
+        ? JSON.parse(decodeURIComponent(defaultCheckedKeys))
+        : [];
+
+    const defaultKeys: SelectedKey[] = Object.entries(defaultKeyArr).map(([key, objValue]) => {
+        const dataType = typeof objValue.value === "string" ? "string" : "number";
+        return { label: key, dataType, value: objValue.value, condition: objValue.condition };
+    });
 
     return (
         <main className="container h-full max-w-screen-2xl justify-center py-4">
@@ -18,11 +30,15 @@ export default function FilterPage({ searchParams }: Params) {
             <div className="mb-2">
                 <span>Your file name: </span>
                 <Badge variant="secondary" data-testid="fileName">
-                    {fileNameFromUrl}
+                    {fileNameFromCookie}
                 </Badge>
             </div>
 
-            <KeyFilter fileName={fileNameFromUrl} keys={fileKeysFromUrl} />
+            <KeyFilter
+                defaultKeys={defaultKeys}
+                fileName={fileNameFromCookie}
+                keys={fileKeysFromCookie}
+            />
         </main>
     );
 }

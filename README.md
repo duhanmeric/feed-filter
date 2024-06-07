@@ -1,14 +1,22 @@
+<div style="text-align:center">
+
+![Feed Filter](/public/logo.svg)
+
+# Feed Filter
+</div>
+
 Documentation
 =============
 
-This tool helps you to filter your XML feed (product catalog) with your desired filters. Main reason to build this tool is to help you to filter your feed with multiple filters.
+Feed filter helps you to filter your XML feed (product catalog) with your desired filters. Main reason to build this tool is to help you to filter your feed with multiple filters.
 
 Installation
 ------------
 
-`git clone https://github.com/duhanmeric/feed-filter.git`  
-`npm install`  
-`npm run dev`
+1. `git clone https://github.com/duhanmeric/feed-filter.git`  
+2. `npm install`
+3. Create a `.env.local` file in the root directory and paste `FILE_OUTPUT_DIR = "uploadedFiles"`
+4. `npm run dev`
 
 How It Works?
 -------------
@@ -60,3 +68,8 @@ Why not in production?
 ----------------------
 
 Thanks to serverless environments, reading/writing a file from `fs` is limited. I could dockerize the app and deploy it to a server but effort would be too much for this simple app. So, I decided to keep it as a local development app.
+
+V2 Update
+----------------------
+
+Now feed-filter, fully supports feeds that have nested tag structure! 

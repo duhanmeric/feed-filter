@@ -6,8 +6,10 @@ import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
 import { fileDownload } from "@/actions/file.actions";
 import SubmitButton from "./SubmitButton";
+import { useRouter } from "next/navigation";
 
 const FileFormURL = () => {
+    const router = useRouter();
     const { toast } = useToast();
 
     const clientAction = async (formData: FormData) => {
@@ -24,6 +26,7 @@ const FileFormURL = () => {
                 title: "Success!",
                 description: "Please take a seat while we are processing your file.",
             });
+            router.push("/filter");
         }
     };
 
@@ -38,7 +41,8 @@ const FileFormURL = () => {
                             placeholder="Feed URL..."
                             id="fileUrl"
                             name="fileUrl"
-                            defaultValue="http://localhost:3000/api/xmlfile"
+                            // defaultValue="http://localhost:3000/basic.xml"
+                            defaultValue="http://localhost:3000/nested.xml"
                         />
                     </div>
                     <SubmitButton title="Confirm" />
