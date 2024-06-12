@@ -6,6 +6,7 @@ import { getSearchParams } from "@/lib/utils";
 import { FilterFields } from "@/actions/helpers.actions";
 import { cookies } from "next/headers";
 import { cookieNames } from "@/constants";
+import FileInfo from "@/components/templates/FileInfo";
 
 export default async function FilePage({ searchParams }: Params) {
     const params = getSearchParams(searchParams, "name", "totalPageCount", "page");
@@ -31,19 +32,7 @@ export default async function FilePage({ searchParams }: Params) {
 
     return (
         <main className="container h-full max-w-screen-2xl justify-center py-4">
-            <h1 className="text-2xl font-bold">Your Filter Results</h1>
-            <div>
-                <span>Your file name: </span>
-                <Badge variant="secondary">{fileNameFromUrl}</Badge>
-            </div>
-            <div className="my-2">
-                <span className="mr-2">Your filters:</span>
-                {defaultKeys.map((filter) => (
-                    <Badge key={filter.key} className="mr-2">
-                        {filter.key} {filter.condition} {filter.value}
-                    </Badge>
-                ))}
-            </div>
+            <FileInfo title="Filter Results" fileNameFromUrl={fileNameFromUrl} defaultKeys={defaultKeys} />
             <Suspense fallback={<FilterCardSkeleton />}>
                 <Items
                     fileNameFromUrl={fileNameFromUrl}

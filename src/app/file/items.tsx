@@ -1,10 +1,10 @@
 import { FeedField } from "@/actions/helpers.actions";
 import Pagination from "@/components/templates/Pagination";
-import { Button } from "@/components/ui/button";
 import { fileOutputDir, itemPerPage } from "@/constants";
 import { existsSync, promises as fsPromises } from "fs";
-import Link from "next/link";
 import path from "path";
+import Filters from "./Filters";
+import ItemData from "./ItemData";
 
 async function getFile(uniqueFileId: string, page: number) {
     const fileName = `total_${uniqueFileId}.json`;
@@ -43,32 +43,8 @@ const Items = async ({ fileNameFromUrl, page, totalPageCount }: Props) => {
 
     return (
         <div className="mt-8">
-            <div className="flex flex-col items-center justify-between gap-2 md:flex-row">
-                <div className="flex gap-4 items-center">
-                    <span>
-                        <span data-testid="result-count">{result.totalCount}</span> items found
-                    </span>
-                    <Button size="sm" asChild variant="outline">
-                        <Link href="/filter">Refilter</Link>
-                    </Button>
-                </div>
-                <Pagination currentPage={Number(page)} totalPageCount={Number(totalPageCount)} />
-            </div>
-            {result.data.length === 0 && (
-                <div className="mb-4 flex h-[500px] items-center justify-center text-2xl font-bold">
-                    No items found
-                </div>
-            )}
-            {result.data.map((item, index) => (
-                <div key={index} className="my-4 rounded-sm border border-black p-4">
-                    <pre className="whitespace-break-spaces break-words text-sm">
-                        {JSON.stringify(item, null, 2)}
-                    </pre>
-                </div>
-            ))}
-            <div className="flex justify-center md:justify-end">
-                <Pagination currentPage={Number(page)} totalPageCount={Number(totalPageCount)} />
-            </div>
+            <Filters page={page} totalPageCount={totalPageCount} result={result} />
+            <ItemData items={result.data} />
         </div>
     );
 };

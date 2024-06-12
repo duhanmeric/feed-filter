@@ -1,6 +1,6 @@
 import { FilterFields } from "@/actions/helpers.actions";
+import FileInfo from "@/components/templates/FileInfo";
 import KeyFilter, { SelectedKey } from "@/components/templates/KeyFilter";
-import { Badge } from "@/components/ui/badge";
 import { cookieNames } from "@/constants";
 import { cookies } from "next/headers";
 
@@ -26,13 +26,7 @@ export default function FilterPage() {
 
     return (
         <main className="container h-full max-w-screen-2xl justify-center py-4">
-            <h1 className="text-2xl font-bold">Filter Keys</h1>
-            <div className="mb-2">
-                <span>Your file name: </span>
-                <Badge variant="secondary" data-testid="fileName">
-                    {fileNameFromCookie}
-                </Badge>
-            </div>
+            <FileInfo title="Select Filters" fileNameFromUrl={fileNameFromCookie} />
 
             <KeyFilter
                 defaultKeys={defaultKeys}
