@@ -44,8 +44,8 @@ export const fileDownload = async (formData: FormData) => {
     }
 
     const encodedKeys = encodeURIComponent(JSON.stringify(keys));
-    cookies().set(cookieNames.keys, encodedKeys, { maxAge: fileDestroyDuration });
-    cookies().set(cookieNames.fileName, randomName, { maxAge: fileDestroyDuration });
+    cookies().set(cookieNames.keys, encodedKeys, { maxAge: fileDestroyDuration / 1000 });
+    cookies().set(cookieNames.fileName, randomName, { maxAge: fileDestroyDuration / 1000 });
 };
 
 const deleteCookies = () => {
@@ -145,6 +145,6 @@ export const submitFilters = async (fileName: string, formData: FormData) => {
         return { message: (error as Error).message };
     }
 
-    cookies().set(cookieNames.filters, encodedOutputArray, { maxAge: fileDestroyDuration });
+    cookies().set(cookieNames.filters, encodedOutputArray, { maxAge: fileDestroyDuration / 1000 });
     redirect(`/file?name=${fileName}&page=1&totalPageCount=${totalPageCount}`);
 };
