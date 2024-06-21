@@ -2,6 +2,7 @@ import type { FeedField } from "@/actions/helpers.actions";
 import Pagination from "@/components/templates/Pagination";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import ExportSheet from "./ExportSheet";
 
 type Props = {
     page: string;
@@ -22,6 +23,7 @@ export default function Filters({ page, totalPageCount, result }: Props) {
                 <Button size="sm" asChild variant="outline">
                     <Link href="/filter">Refilter</Link>
                 </Button>
+                <ExportSheet />
             </div>
             <Pagination currentPage={Number(page)} totalPageCount={Number(totalPageCount)} />
         </div>

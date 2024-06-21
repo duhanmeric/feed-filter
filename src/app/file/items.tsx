@@ -1,5 +1,4 @@
 import { FeedField } from "@/actions/helpers.actions";
-import Pagination from "@/components/templates/Pagination";
 import { fileOutputDir, itemPerPage } from "@/constants";
 import { existsSync, promises as fsPromises } from "fs";
 import path from "path";

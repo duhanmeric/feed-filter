@@ -200,7 +200,7 @@ export const getAllKeys = (obj: Record<string, any>, prefix: string = ""): strin
     }, []);
 };
 
-const getNestedValue = (obj: any, key: string): any => {
+export const getNestedValue = (obj: any, key: string): any => {
     const keys = key.split(".");
     let result = obj;
 
