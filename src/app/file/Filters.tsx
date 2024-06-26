@@ -3,6 +3,8 @@ import Pagination from "@/components/templates/Pagination";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ExportSheet from "./ExportSheet";
+import { cookies } from "next/headers";
+import { cookieNames } from "@/constants";
 
 type Props = {
     page: string;
@@ -14,6 +16,14 @@ type Props = {
 }
 
 export default function Filters({ page, totalPageCount, result }: Props) {
+    const keysFromCookie = cookies().get(cookieNames.keys);
+    const fileNameFromCookie = cookies().get(cookieNames.fileName);
+
+    if (!keysFromCookie || !fileNameFromCookie) {
+        return <div>Cookie error!</div>;
+    }
+
+    const keys: string[] = JSON.parse(decodeURIComponent(keysFromCookie.value));
     return (
         <div className="flex flex-col items-center justify-between gap-2 md:flex-row">
             <div className="flex gap-4 items-center">
@@ -23,7 +33,10 @@ export default function Filters({ page, totalPageCount, result }: Props) {
                 <Button size="sm" asChild variant="outline">
                     <Link href="/filter">Refilter</Link>
                 </Button>
-                <ExportSheet />
+                <ExportSheet
+                    keys={keys}
+                    fileNameFromCookie={fileNameFromCookie.value}
+                />
             </div>
             <Pagination currentPage={Number(page)} totalPageCount={Number(totalPageCount)} />
         </div>

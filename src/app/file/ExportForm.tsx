@@ -1,19 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import MultipleSelector, { Option } from "@/components/ui/multiselect";
+import { useState } from "react";
 
 type Props = {
-    keys: string[];
+    keys: Option[];
     fileName: string;
 }
 
@@ -25,18 +20,18 @@ export type ExportType = {
 
 export default function ExportForm({ keys, fileName }: Props) {
     const { toast } = useToast();
+    const [field, setField] = useState<Option[]>([]);
+    const [checkAll, setCheckAll] = useState(false);
 
-    const clientAction = async (formData: FormData) => {
-        const checkAll = formData.get("check-all") as string;
-        const field = formData.get("field") as string;
 
+    const clientAction = async () => {
         try {
             const res = await fetch("/api/export", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ checkAll, field }),
+                body: JSON.stringify({ field, checkAll }),
             });
 
             const result: ExportType = await res.json();
@@ -67,35 +62,48 @@ export default function ExportForm({ keys, fileName }: Props) {
         }
     };
 
+    const handleCheckAll = (val: boolean) => {
+        if (val) {
+            setField([]);
+        }
+
+        setCheckAll(val);
+    }
+
+    const handleSelectOptions = (options: Option[]) => {
+        if (options.length === keys.length) {
+            setCheckAll(true);
+        } else {
+            setCheckAll(false);
+        }
+        setField(options);
+    }
     return (
         <form action={clientAction} className="space-y-4">
             <div className="space-y-1">
                 <Label
                     htmlFor="field-select"
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+
                 >
-                    Select Your Field
+                    Select Your Field(s)
                 </Label>
-                <Select name="field">
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select Field" />
-                    </SelectTrigger>
-                    <SelectContent id="field-select">
-                        {
-                            keys.map((key) => {
-                                return (
-                                    <SelectItem key={key} value={key}>
-                                        {key}
-                                    </SelectItem>
-                                );
-                            })
-                        }
-                    </SelectContent>
-                </Select>
+                <MultipleSelector
+                    value={field}
+                    onChange={(options) => handleSelectOptions(options as Option[])}
+                    defaultOptions={keys}
+                    placeholder="Select fields you like..."
+                    clearAllCallback={() => setField([])}
+                    emptyIndicator={
+                        <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                            no results found.
+                        </p>
+                    }
+                />
             </div>
 
             <div className="items-center flex space-x-2 ">
-                <Checkbox id="check-all" name="check-all" />
+                <Checkbox id="check-all" name="check-all" checked={checkAll} onCheckedChange={handleCheckAll} />
                 <Label
                     htmlFor="check-all"
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

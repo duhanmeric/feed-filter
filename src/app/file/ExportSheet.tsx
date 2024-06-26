@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -8,19 +10,19 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 
-import { cookies } from "next/headers";
-import { cookieNames } from "@/constants";
 import ExportForm from "./ExportForm";
+import { Option } from "@/components/ui/multiselect";
 
-export default function ExportSheet() {
-    const keysFromCookie = cookies().get(cookieNames.keys);
-    const fileNameFromCookie = cookies().get(cookieNames.fileName);
+type Props = {
+    keys: string[];
+    fileNameFromCookie: string;
+}
 
-    if (!keysFromCookie || !fileNameFromCookie) {
-        return <div>Cookie error!</div>;
-    }
-
-    const keys: string[] = JSON.parse(decodeURIComponent(keysFromCookie.value));
+export default function ExportSheet({ keys, fileNameFromCookie }: Props) {
+    const keyOptions: Option[] = keys.map((key) => ({
+        value: key,
+        label: key
+    }));
 
     return (
         <Sheet>
@@ -30,7 +32,7 @@ export default function ExportSheet() {
                     <span className="ml-1">✨</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent onOpenAutoFocus={(e) => e.preventDefault()}>
                 <SheetHeader>
                     <SheetTitle>Export Data</SheetTitle>
                     <SheetDescription>
@@ -38,7 +40,7 @@ export default function ExportSheet() {
                     </SheetDescription>
                 </SheetHeader>
                 <br />
-                <ExportForm keys={keys} fileName={fileNameFromCookie.value} />
+                <ExportForm keys={keyOptions} fileName={fileNameFromCookie} />
             </SheetContent>
         </Sheet>
     );
